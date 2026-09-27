@@ -1,0 +1,63 @@
+rules_version = '2';
+
+// ===========================================================
+// قواعد أمان Firestore
+// ===========================================================
+// كيف تُفعّلها:
+// 1. Firebase Console > Firestore Database > Rules
+// 2. امسح كل ما هو موجود، والصق محتوى هذا الملف بالكامل
+// 3. اضغط Publish
+//
+// ملخص الحماية:
+// - "staff" (بيانات الموظفين وصلاحياتهم): أي موظف مسجّل دخول يقدر يقرأها
+//   (يحتاجها ليعرف صلاحيته هو)، لكن الإنشاء/التعديل مقصور على "مدير النظام" فقط
+//   عبر جلسته هو (وليس عبر الموظف الجديد نفسه) - يمنع أي شخص من تسجيل حساب
+//   مباشرة عبر Firebase ومنح نفسه صلاحية admin.
+// - "cafe_branches" (بيانات الفرع: المبيعات، المخزون...): أي موظف مسجّل
+//   دخول بحساب موثّق بمجموعة staff يقدر يقرأ ويكتب (لازم للكاشير يسجل مبيعات).
+// - "licenses" (مفاتيح التراخيص/الاشتراكات): يُقرأ بدون تسجيل دخول (الفحص يصير
+//   قبل أي تسجيل دخول)، لكن التعديل مقصور فقط على حقل deviceId (لربط المفتاح
+//   بأول جهاز يُفعّله)، ولا يمكن إنشاء أو حذف مفاتيح إلا يدويًا من Firebase Console.
+// - أي شخص غير مسجّل دخول أو غير موثّق بمجموعة staff: ممنوع من كل شيء تمامًا.
+// ===========================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid))
+        && get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.role == "admin";
+    }
+
+    match /staff/{userId} {
+      allow get: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /cafe_branches/{branchId}/{allChildren=**} {
+      allow read, write: if request.auth != null
+                          && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+    }
+
+    match /licenses/{key} {
+      // السماح بالتحقق من صلاحية مفتاح محدد (get فقط، ويُمنع سرد كل المفاتيح list)
+      allow get: if true;
+      allow list: if false;
+
+      // السماح بتسجيل معرف الجهاز ووقت التحقق مع حماية حقول الصلاحية والانتهاء
+      allow update: if (
+        (!('deviceHash' in resource.data) || resource.data.deviceHash == request.resource.data.deviceHash)
+        && (!('active' in request.resource.data) || request.resource.data.active == resource.data.active)
+        && (!('expiresAt' in request.resource.data) || request.resource.data.expiresAt == resource.data.expiresAt)
+      );
+      allow create, delete: if false;
+    }
+
+    // أي مسار آخر غير معرّف أعلاه: ممنوع افتراضيًا
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
