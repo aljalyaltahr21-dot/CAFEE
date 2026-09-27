@@ -634,6 +634,10 @@ $role = $user['role'] ?? 'customer';
   </div>
 
   <div class="user-area">
+    <a href="pos.php" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#63262E,#8C4334);color:#fff;padding:8px 16px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:800;box-shadow:0 4px 12px rgba(99,38,46,0.25);margin-left:8px;">
+      <span>☕</span>
+      <span>شاشة الكاشير (Web POS)</span>
+    </a>
     <?php if ($role === 'admin'): ?>
       <div class="role-badge role-admin">👑 المدير العام (الأدمن)</div>
     <?php elseif ($role === 'manager'): ?>
