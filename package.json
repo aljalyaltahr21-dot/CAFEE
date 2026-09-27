@@ -1,6 +1,6 @@
 {
   "name": "cafe-pos",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "نظام إدارة المقهى - نقطة بيع ولوحة تحكم",
   "main": "main.js",
   "author": "Cafe POS",

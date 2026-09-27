@@ -32,7 +32,7 @@ function asMillis(value) {
   return null;
 }
 
-async function checkLicense(key, deviceId, appVersion = "1.0.2") {
+async function checkLicense(key, deviceId, appVersion = "1.0.3") {
   if (!isFirebaseConfigured()) return { valid: false, reason: "licensing-not-configured" };
   const cleanKey = String(key || "").trim();
   if (!cleanKey) return { valid: false, reason: "not-found" };
@@ -100,7 +100,7 @@ async function checkLicense(key, deviceId, appVersion = "1.0.2") {
 }
 
 // نبض اتصال دوري لتسجيل حالة المقهى الأونلاين وآخر نشاط له
-async function pingHeartbeat(key, appVersion = "1.0.2") {
+async function pingHeartbeat(key, appVersion = "1.0.3") {
   if (!isFirebaseConfigured()) return;
   const cleanKey = String(key || "").trim();
   if (!cleanKey) return;

@@ -29719,7 +29719,7 @@ This typically indicates that your device does not have a healthy Internet conne
         if (value instanceof Date) return value.getTime();
         return null;
       }
-      async function checkLicense(key, deviceId, appVersion = "1.0.2") {
+      async function checkLicense(key, deviceId, appVersion = "1.0.3") {
         if (!isFirebaseConfigured()) return { valid: false, reason: "licensing-not-configured" };
         const cleanKey = String(key || "").trim();
         if (!cleanKey) return { valid: false, reason: "not-found" };
@@ -29773,7 +29773,7 @@ This typically indicates that your device does not have a healthy Internet conne
           return { valid: false, reason: "network-error" };
         }
       }
-      async function pingHeartbeat(key, appVersion = "1.0.2") {
+      async function pingHeartbeat(key, appVersion = "1.0.3") {
         if (!isFirebaseConfigured()) return;
         const cleanKey = String(key || "").trim();
         if (!cleanKey) return;
@@ -30767,7 +30767,7 @@ This typically indicates that your device does not have a healthy Internet conne
     }
     syncToCloud();
     if (state.licenseInfo && state.licenseInfo.licenseKey && license.pingHeartbeat) {
-      license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+      license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.3");
     }
     renderMain();
   }
@@ -31652,7 +31652,7 @@ This typically indicates that your device does not have a healthy Internet conne
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;margin-bottom:14px">
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-light)">
           <span class="muted">\u0627\u0644\u0625\u0635\u062F\u0627\u0631 \u0627\u0644\u062D\u0627\u0644\u064A:</span>
-          <span style="font-family:monospace;font-weight:700">v${state.appVersion || "1.0.1"}</span>
+          <span style="font-family:monospace;font-weight:700">v${state.appVersion || "1.0.3"}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-light)">
           <span class="muted">\u062D\u0627\u0644\u0629 \u0627\u0644\u062A\u062D\u062F\u064A\u062B:</span>
@@ -32035,6 +32035,9 @@ This typically indicates that your device does not have a healthy Internet conne
       state.licenseError = "\u0644\u0627 \u064A\u0645\u0643\u0646 \u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u062A\u0637\u0628\u064A\u0642 \u062E\u0627\u0631\u062C \u0627\u0644\u0646\u0633\u062E\u0629 \u0627\u0644\u0631\u0633\u0645\u064A\u0629 \u0627\u0644\u0645\u062B\u0628\u0651\u062A\u0629";
       return;
     }
+    if (!state.appVersion && window.electronAPI && window.electronAPI.getAppVersion) {
+      state.appVersion = await window.electronAPI.getAppVersion().catch(() => "1.0.3");
+    }
     const info = await window.electronAPI.dbGetLicenseInfo().catch(() => null);
     state.licenseInfo = info;
     if (!license.isFirebaseConfigured()) {
@@ -32046,7 +32049,7 @@ This typically indicates that your device does not have a healthy Internet conne
       state.licenseState = "needs-key";
       return;
     }
-    const appVer = state.appVersion || "1.0.2";
+    const appVer = state.appVersion || "1.0.3";
     const result = await license.checkLicense(info.licenseKey, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
     if (result.valid) {
       const saved = await window.electronAPI.dbSaveLicenseValidation({
@@ -32087,7 +32090,7 @@ This typically indicates that your device does not have a healthy Internet conne
     state.licenseState = "checking";
     render();
     const info = state.licenseInfo || await window.electronAPI.dbGetLicenseInfo();
-    const appVer = state.appVersion || "1.0.2";
+    const appVer = state.appVersion || "1.0.3";
     const result = await license.checkLicense(key, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
     if (result.valid) {
       const saved = await window.electronAPI.dbSaveLicenseValidation({ key, customerName: result.customerName, expiresAt: result.expiresAt });
@@ -32154,7 +32157,7 @@ This typically indicates that your device does not have a healthy Internet conne
       }
     }
     if (window.electronAPI && window.electronAPI.getAppVersion) {
-      state.appVersion = await window.electronAPI.getAppVersion().catch(() => "1.0.1");
+      state.appVersion = await window.electronAPI.getAppVersion().catch(() => "1.0.3");
     }
     const branchOverride = state.licenseInfo && state.licenseInfo.licenseKey ? state.licenseInfo.licenseKey.trim() : null;
     cloud.initCloud(handleCloudData, handleCloudStatus, branchOverride);
@@ -32167,7 +32170,7 @@ This typically indicates that your device does not have a healthy Internet conne
       setInterval(enforceLicenseExpiration, 30 * 1e3);
       setInterval(async () => {
         if (state.licenseState === "valid" && state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
-          const appVer = state.appVersion || "1.0.2";
+          const appVer = state.appVersion || "1.0.3";
           const res = await license.checkLicense(state.licenseInfo.licenseKey, state.licenseInfo.deviceId, appVer).catch(() => null);
           if (res && !res.valid) {
             state.licenseState = "invalid";
@@ -32184,7 +32187,7 @@ This typically indicates that your device does not have a healthy Internet conne
       }, 60 * 60 * 1e3);
       setInterval(() => {
         if (state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
-          license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+          license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.3");
         }
       }, 2 * 60 * 1e3);
     } else {

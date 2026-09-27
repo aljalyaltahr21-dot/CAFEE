@@ -710,7 +710,7 @@ $role = $user['role'] ?? 'customer';
           </div>
           <div>
             <h3 style="font-size:17px;font-weight:900;color:var(--navy);margin-bottom:3px;">تحميل وتثبيت برنامج الكاشير المكتبي (Desktop POS)</h3>
-            <p style="font-size:12px;color:var(--slate);">الإصدار الرسمي 1.0.2 لويندوز 64-bit | تنزيل آمن وسريع | معالج تثبيت تلقائي</p>
+            <p style="font-size:12px;color:var(--slate);">الإصدار الرسمي 1.0.3 لويندوز 64-bit | تنزيل آمن وسريع | معالج تثبيت تلقائي</p>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -906,11 +906,11 @@ $role = $user['role'] ?? 'customer';
           <div style="font-size:22px;font-weight:900;color:#059669;" id="kpiFleetOnline">0</div>
         </div>
         <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;padding:14px;text-align:center;">
-          <div style="font-size:11.5px;font-weight:700;color:#1E40AF;margin-bottom:4px;">✅ محدثة للإصدار v1.0.2</div>
+          <div style="font-size:11.5px;font-weight:700;color:#1E40AF;margin-bottom:4px;">✅ محدثة للإصدار v1.0.3</div>
           <div style="font-size:22px;font-weight:900;color:#1D4ED8;" id="kpiFleetUpdated">0</div>
         </div>
         <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:14px;padding:14px;text-align:center;">
-          <div style="font-size:11.5px;font-weight:700;color:#92400E;margin-bottom:4px;">⚠️ تحتاج تحديث (v1.0.1)</div>
+          <div style="font-size:11.5px;font-weight:700;color:#92400E;margin-bottom:4px;">⚠️ تحتاج تحديث (&lt; v1.0.3)</div>
           <div style="font-size:22px;font-weight:900;color:#D97706;" id="kpiFleetOutdated">0</div>
         </div>
       </div>
@@ -1958,7 +1958,7 @@ async function loadLicenses() {
       if (isOnline) onlineCount++;
 
       const ver = (l.appVersion || '1.0.1').trim();
-      if (ver === '1.0.2') {
+      if (ver === '1.0.3') {
         updatedCount++;
       } else {
         outdatedCount++;
@@ -2001,7 +2001,7 @@ async function loadLicenses() {
       }
 
       const ver = (l.appVersion || '1.0.1').trim();
-      const isLatestVer = ver === '1.0.2';
+      const isLatestVer = ver === '1.0.3';
 
       return `
         <tr>

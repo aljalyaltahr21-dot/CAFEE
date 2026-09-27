@@ -1018,7 +1018,7 @@ async function checkout() {
 
   syncToCloud();
   if (state.licenseInfo && state.licenseInfo.licenseKey && license.pingHeartbeat) {
-    license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+    license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.3");
   }
   renderMain();
 }
@@ -1923,7 +1923,7 @@ function renderSettings() {
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;margin-bottom:14px">
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-light)">
           <span class="muted">الإصدار الحالي:</span>
-          <span style="font-family:monospace;font-weight:700">v${state.appVersion || "1.0.1"}</span>
+          <span style="font-family:monospace;font-weight:700">v${state.appVersion || "1.0.3"}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-light)">
           <span class="muted">حالة التحديث:</span>
@@ -2324,6 +2324,10 @@ async function initLicense() {
     return;
   }
 
+  if (!state.appVersion && window.electronAPI && window.electronAPI.getAppVersion) {
+    state.appVersion = await window.electronAPI.getAppVersion().catch(() => "1.0.3");
+  }
+
   const info = await window.electronAPI.dbGetLicenseInfo().catch(() => null);
   state.licenseInfo = info;
 
@@ -2338,7 +2342,7 @@ async function initLicense() {
     return;
   }
 
-  const appVer = state.appVersion || "1.0.2";
+  const appVer = state.appVersion || "1.0.3";
   const result = await license.checkLicense(info.licenseKey, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
 
   if (result.valid) {
@@ -2385,7 +2389,7 @@ async function submitLicenseKey(e) {
   render();
 
   const info = state.licenseInfo || (await window.electronAPI.dbGetLicenseInfo());
-  const appVer = state.appVersion || "1.0.2";
+  const appVer = state.appVersion || "1.0.3";
   const result = await license.checkLicense(key, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
 
   if (result.valid) {
@@ -2459,7 +2463,7 @@ async function initApp() {
   }
 
   if (window.electronAPI && window.electronAPI.getAppVersion) {
-    state.appVersion = await window.electronAPI.getAppVersion().catch(() => "1.0.1");
+    state.appVersion = await window.electronAPI.getAppVersion().catch(() => "1.0.3");
   }
 
   const branchOverride = (state.licenseInfo && state.licenseInfo.licenseKey) ? state.licenseInfo.licenseKey.trim() : null;
@@ -2476,7 +2480,7 @@ async function bootstrap() {
     // فحص دوري كل ساعة من السيرفر للتأكد من عدم إلغاء المفتاح
     setInterval(async () => {
       if (state.licenseState === "valid" && state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
-        const appVer = state.appVersion || "1.0.2";
+        const appVer = state.appVersion || "1.0.3";
         const res = await license.checkLicense(state.licenseInfo.licenseKey, state.licenseInfo.deviceId, appVer).catch(() => null);
         if (res && !res.valid) {
           state.licenseState = "invalid";
@@ -2495,7 +2499,7 @@ async function bootstrap() {
     // نبض اتصال دوري كل دقيقتين لتسجيل حالة المقهى الأونلاين وآخر ظهور ورقم الإصدار في الويب
     setInterval(() => {
       if (state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
-        license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+        license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.3");
       }
     }, 2 * 60 * 1000);
   } else {

@@ -78,7 +78,7 @@ if ($targetFile && file_exists($targetFile)) {
 
 // في حال لم يتم رفع ملف البرنامج بعد داخل مجلد downloads على الاستضافة:
 // يتم التنزيل مباشرة وبأعلى سرعة من سيرفر GitHub الرسمي المعتمد
-$githubDirectUrl = 'https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/v1.0.2/CafePOS-Setup-1.0.2.exe';
+$githubDirectUrl = 'https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/v1.0.3/CafePOS-Setup-1.0.3.exe';
 header('Location: ' . $githubDirectUrl);
 exit;
 
