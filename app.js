@@ -1017,6 +1017,9 @@ async function checkout() {
   }
 
   syncToCloud();
+  if (state.licenseInfo && state.licenseInfo.licenseKey && license.pingHeartbeat) {
+    license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+  }
   renderMain();
 }
 
@@ -1242,6 +1245,14 @@ async function restoreBackup() {
     setTimeout(() => { if (window.electronAPI.relaunchApp) window.electronAPI.relaunchApp(); }, 1200);
   } else if (result && result.error) {
     showToast("تعذّرت الاستعادة: " + result.error);
+  }
+}
+
+async function openBackupsFolder() {
+  if (window.electronAPI && window.electronAPI.openBackupsFolder) {
+    await window.electronAPI.openBackupsFolder();
+  } else {
+    showToast("فتح المجلد متاح في تطبيق سطح المكتب فقط");
   }
 }
 
@@ -1696,6 +1707,22 @@ function renderPOS() {
             <span class="search-icon">${icon("search", 16)}</span>
           </div>
         </div>
+        ${(() => {
+          const lowItems = state.products.filter(p => p.trackStock !== false && p.stock <= p.threshold);
+          if (lowItems.length === 0) return "";
+          return `
+            <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:6px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#92400E;">
+              <span style="display:flex;align-items:center;gap:6px;">
+                <span>⚠️</span>
+                <b>تنبيه مخزون:</b>
+                <span>يوجد ${lowItems.length} صنف قارب على النفاد (${lowItems.slice(0, 3).map(p => `${p.name}: ${p.stock}`).join("، ")}${lowItems.length > 3 ? "..." : ""})</span>
+              </span>
+              <button type="button" style="background:#F59E0B;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="setView('inventory')">
+                المخزون ←
+              </button>
+            </div>
+          `;
+        })()}
         <div class="pill-row">
           ${CATEGORIES.map(c => `<button class="pill ${state.category === c ? "active" : ""}" onclick="setCategory('${c}')">${c}</button>`).join("")}
         </div>
@@ -1848,12 +1875,15 @@ function renderSettings() {
     </div>
 
     <div style="max-width:500px;margin-top:20px" class="card panel">
-      <h3 style="margin-bottom:6px">${icon("download", 16)} النسخ الاحتياطي</h3>
-      <p class="field-hint" style="margin-bottom:14px">صدّر نسخة من كل بياناتك (المنتجات، المبيعات، الورديات) كملف تقدر تحفظه بمكان آمن، أو تستعيده لاحقًا على أي جهاز.</p>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="exportBackup()">${icon("download", 15)} تصدير نسخة احتياطية</button>
+      <h3 style="margin-bottom:6px">${icon("download", 16)} النسخ الاحتياطي التلقائي واليدوي</h3>
+      <p class="field-hint" style="margin-bottom:12px">يتم إنشاء نسخة احتياطية تلقائياً كل يوم عند تقفيل الوردية. يمكنك أيضاً حفظ نسخة يدوية أو استعادة نسخة سابقة في أي وقت.</p>
+      <div style="display:flex;gap:10px;margin-bottom:10px">
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="exportBackup()">${icon("download", 15)} تصدير نسخة يدوية</button>
         <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="restoreBackup()">${icon("refresh", 15)} استعادة نسخة</button>
       </div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:12.5px" onclick="openBackupsFolder()">
+        📁 فتح مجلد النسخ الاحتياطية التلقائية
+      </button>
     </div>
 
     <div style="max-width:500px;margin-top:20px" class="card panel">
@@ -2308,7 +2338,8 @@ async function initLicense() {
     return;
   }
 
-  const result = await license.checkLicense(info.licenseKey, info.deviceId).catch(() => ({ valid: false, reason: "network-error" }));
+  const appVer = state.appVersion || "1.0.2";
+  const result = await license.checkLicense(info.licenseKey, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
 
   if (result.valid) {
     const saved = await window.electronAPI.dbSaveLicenseValidation({
@@ -2354,7 +2385,8 @@ async function submitLicenseKey(e) {
   render();
 
   const info = state.licenseInfo || (await window.electronAPI.dbGetLicenseInfo());
-  const result = await license.checkLicense(key, info.deviceId).catch(() => ({ valid: false, reason: "network-error" }));
+  const appVer = state.appVersion || "1.0.2";
+  const result = await license.checkLicense(key, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
 
   if (result.valid) {
     const saved = await window.electronAPI.dbSaveLicenseValidation({ key, customerName: result.customerName, expiresAt: result.expiresAt });
@@ -2444,7 +2476,8 @@ async function bootstrap() {
     // فحص دوري كل ساعة من السيرفر للتأكد من عدم إلغاء المفتاح
     setInterval(async () => {
       if (state.licenseState === "valid" && state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
-        const res = await license.checkLicense(state.licenseInfo.licenseKey, state.licenseInfo.deviceId).catch(() => null);
+        const appVer = state.appVersion || "1.0.2";
+        const res = await license.checkLicense(state.licenseInfo.licenseKey, state.licenseInfo.deviceId, appVer).catch(() => null);
         if (res && !res.valid) {
           state.licenseState = "invalid";
           const reasons = {
@@ -2458,6 +2491,13 @@ async function bootstrap() {
         }
       }
     }, 60 * 60 * 1000);
+
+    // نبض اتصال دوري كل دقيقتين لتسجيل حالة المقهى الأونلاين وآخر ظهور ورقم الإصدار في الويب
+    setInterval(() => {
+      if (state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
+        license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+      }
+    }, 2 * 60 * 1000);
   } else {
     render();
   }
@@ -2495,7 +2535,7 @@ Object.assign(window, {
   toggleStockFieldsVisibility, refundTransaction, exportSalesToCSV, saveReceiptSettings,
   pickLogo, removeLogo,
   openShortageModal, closeShortageModal, reportShortage, resolveShortageItem,
-  openPurchaseModal, closePurchaseModal, savePurchase, exportBackup, restoreBackup,
+  openPurchaseModal, closePurchaseModal, savePurchase, exportBackup, restoreBackup, openBackupsFolder,
   submitLicenseKey, retryLicenseCheck, enterNewLicenseKey, bypassLicenseForDev,
   toggleShortageNameInput, openPaymentModal, closePaymentModal, submitSupplierPayment,
   numpadPress, numpadBackspace, numpadClear, checkAppUpdatesManual,

@@ -32,7 +32,7 @@ function asMillis(value) {
   return null;
 }
 
-async function checkLicense(key, deviceId) {
+async function checkLicense(key, deviceId, appVersion = "1.0.2") {
   if (!isFirebaseConfigured()) return { valid: false, reason: "licensing-not-configured" };
   const cleanKey = String(key || "").trim();
   if (!cleanKey) return { valid: false, reason: "not-found" };
@@ -68,10 +68,13 @@ async function checkLicense(key, deviceId) {
       return { valid: false, reason: "device-mismatch" };
     }
 
-    // ربط الجهاز وتحديث تاريخ آخر تحقق
+    // ربط الجهاز وتحديث تاريخ آخر تحقق ورقم الإصدار وحالة الاتصال
     const updates = {
       deviceHash: hashedDevice,
+      appVersion: String(appVersion || "1.0.2"),
       lastValidatedAt: serverTimestamp(),
+      lastActiveAt: serverTimestamp(),
+      online: true,
     };
     if (!license.activatedAt) {
       updates.activatedAt = serverTimestamp();
@@ -96,4 +99,24 @@ async function checkLicense(key, deviceId) {
   }
 }
 
-module.exports = { checkLicense, isFirebaseConfigured };
+// نبض اتصال دوري لتسجيل حالة المقهى الأونلاين وآخر نشاط له
+async function pingHeartbeat(key, appVersion = "1.0.2") {
+  if (!isFirebaseConfigured()) return;
+  const cleanKey = String(key || "").trim();
+  if (!cleanKey) return;
+  try {
+    const { getFirestore, doc, updateDoc, serverTimestamp } = require("firebase/firestore");
+    const app = getFirebaseApp();
+    const db = getFirestore(app);
+    const docRef = doc(db, "licenses", cleanKey);
+    await updateDoc(docRef, {
+      appVersion: String(appVersion || "1.0.2"),
+      lastActiveAt: serverTimestamp(),
+      online: true,
+    });
+  } catch (_) {
+    // نبض الاتصال يتم في الخلفية بدون حجب
+  }
+}
+
+module.exports = { checkLicense, pingHeartbeat, isFirebaseConfigured };

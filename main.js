@@ -84,9 +84,36 @@ ipcMain.handle("download-update", async () => {
   }
 });
 
+function createAutoBackup() {
+  try {
+    const userData = app.getPath("userData");
+    const backupsDir = path.join(userData, "backups");
+    if (!fs.existsSync(backupsDir)) {
+      fs.mkdirSync(backupsDir, { recursive: true });
+    }
+    const today = new Date().toISOString().slice(0, 10);
+    const backupFile = path.join(backupsDir, `cafe-backup-${today}.sqlite`);
+    const dbFile = db.getDbFilePath();
+    if (fs.existsSync(dbFile)) {
+      fs.copyFileSync(dbFile, backupFile);
+      console.log("[Backup] Auto backup created:", backupFile);
+    }
+    const files = fs.readdirSync(backupsDir)
+      .filter(f => f.startsWith("cafe-backup-") && f.endsWith(".sqlite"))
+      .sort();
+    while (files.length > 14) {
+      const oldest = files.shift();
+      try { fs.unlinkSync(path.join(backupsDir, oldest)); } catch (_) {}
+    }
+  } catch (err) {
+    console.warn("[Backup] Auto backup failed:", err);
+  }
+}
+
 app.whenReady().then(async () => {
   try {
     await db.initDatabase(app.getPath("userData"));
+    createAutoBackup();
     createWindow();
   } catch (err) {
     console.error("خطأ أثناء تهيئة قاعدة البيانات:", err);
@@ -115,7 +142,11 @@ ipcMain.handle("db-save-held-carts", async (event, heldCarts) => {
   return true;
 });
 ipcMain.handle("db-open-shift", async (event, { openingCash, openedBy }) => db.openShift(openingCash, openedBy));
-ipcMain.handle("db-close-shift", async (event, { actualCash, closedBy }) => db.closeShift(actualCash, closedBy));
+ipcMain.handle("db-close-shift", async (event, { actualCash, closedBy }) => {
+  const res = await db.closeShift(actualCash, closedBy);
+  createAutoBackup();
+  return res;
+});
 ipcMain.handle("db-list-shift-history", async () => db.listShiftHistory());
 ipcMain.handle("db-close-week", async () => db.closeWeek());
 ipcMain.handle("db-close-month", async () => db.closeMonth());
@@ -180,6 +211,17 @@ ipcMain.handle("backup-restore", async () => {
   } catch (e) {
     return { ok: false, error: String(e.message || e) };
   }
+});
+
+ipcMain.handle("open-backups-folder", async () => {
+  const { shell } = require("electron");
+  const userData = app.getPath("userData");
+  const backupsDir = path.join(userData, "backups");
+  if (!fs.existsSync(backupsDir)) {
+    fs.mkdirSync(backupsDir, { recursive: true });
+  }
+  await shell.openPath(backupsDir);
+  return { ok: true, path: backupsDir };
 });
 
 ipcMain.handle("db-save-receipt-settings", async (event, settings) => db.saveReceiptSettings(settings));

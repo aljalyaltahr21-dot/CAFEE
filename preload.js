@@ -36,6 +36,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // النسخ الاحتياطي
   backupExport: () => ipcRenderer.invoke("backup-export"),
   backupRestore: () => ipcRenderer.invoke("backup-restore"),
+  openBackupsFolder: () => ipcRenderer.invoke("open-backups-folder"),
 
   // إعدادات الفاتورة
   dbSaveReceiptSettings: (settings) => ipcRenderer.invoke("db-save-receipt-settings", settings),

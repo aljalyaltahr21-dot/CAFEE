@@ -895,6 +895,26 @@ $role = $user['role'] ?? 'customer';
         <button class="btn btn-primary" onclick="openNewLicenseModal()">➕ توليد ترخيص جديد</button>
       </div>
 
+      <!-- ملخص المراقبة الحية لشبكة المقاهي -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+        <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:center;">
+          <div style="font-size:11.5px;font-weight:700;color:var(--slate);margin-bottom:4px;">إجمالي المقاهي والتراخيص</div>
+          <div style="font-size:22px;font-weight:900;color:var(--navy);" id="kpiFleetTotal">0</div>
+        </div>
+        <div style="background:#ECFDF5;border:1.5px solid #A7F3D0;border-radius:14px;padding:14px;text-align:center;">
+          <div style="font-size:11.5px;font-weight:700;color:#065F46;margin-bottom:4px;">🟢 متصلة أونلاين الآن</div>
+          <div style="font-size:22px;font-weight:900;color:#059669;" id="kpiFleetOnline">0</div>
+        </div>
+        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;padding:14px;text-align:center;">
+          <div style="font-size:11.5px;font-weight:700;color:#1E40AF;margin-bottom:4px;">✅ محدثة للإصدار v1.0.2</div>
+          <div style="font-size:22px;font-weight:900;color:#1D4ED8;" id="kpiFleetUpdated">0</div>
+        </div>
+        <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:14px;padding:14px;text-align:center;">
+          <div style="font-size:11.5px;font-weight:700;color:#92400E;margin-bottom:4px;">⚠️ تحتاج تحديث (v1.0.1)</div>
+          <div style="font-size:22px;font-weight:900;color:#D97706;" id="kpiFleetOutdated">0</div>
+        </div>
+      </div>
+
       <div class="table-responsive">
         <table>
           <thead>
@@ -902,15 +922,17 @@ $role = $user['role'] ?? 'customer';
               <th>مفتاح الترخيص</th>
               <th>صاحب المقهى / الاسم</th>
               <th>اسم المقهى</th>
+              <th>الإصدار الحالي</th>
+              <th>الاتصال والنشاط</th>
               <th>البريد الإلكتروني</th>
               <th>تاريخ الانتهاء</th>
               <th>الحالة</th>
-              <th>الجهاز المرتبط</th>
+              <th>الجهاز</th>
               <th>إجراءات</th>
             </tr>
           </thead>
           <tbody id="licensesTableBody">
-            <tr><td colspan="8" style="text-align:center;color:var(--slate);">جارٍ تحميل التراخيص...</td></tr>
+            <tr><td colspan="10" style="text-align:center;color:var(--slate);">جارٍ تحميل التراخيص...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1919,8 +1941,41 @@ async function loadLicenses() {
     if (!json.ok) return;
 
     const licenses = json.licenses || [];
+    
+    // حساب مؤشرات الشبكة الحية
+    let onlineCount = 0;
+    let updatedCount = 0;
+    let outdatedCount = 0;
+    const now = Date.now();
+
+    licenses.forEach(l => {
+      const lastActive = l.lastActiveAt || l.lastValidatedAt || null;
+      let lastMillis = 0;
+      if (lastActive) {
+        lastMillis = typeof lastActive === 'number' ? lastActive : (lastActive.seconds ? lastActive.seconds * 1000 : new Date(lastActive).getTime());
+      }
+      const isOnline = lastMillis > 0 && (now - lastMillis) <= (10 * 60 * 1000); // خلال آخر 10 دقائق
+      if (isOnline) onlineCount++;
+
+      const ver = (l.appVersion || '1.0.1').trim();
+      if (ver === '1.0.2') {
+        updatedCount++;
+      } else {
+        outdatedCount++;
+      }
+    });
+
+    const elTotal = document.getElementById('kpiFleetTotal');
+    const elOnline = document.getElementById('kpiFleetOnline');
+    const elUpdated = document.getElementById('kpiFleetUpdated');
+    const elOutdated = document.getElementById('kpiFleetOutdated');
+    if (elTotal) elTotal.textContent = licenses.length;
+    if (elOnline) elOnline.textContent = onlineCount;
+    if (elUpdated) elUpdated.textContent = updatedCount;
+    if (elOutdated) elOutdated.textContent = outdatedCount;
+
     if (licenses.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--slate);">لا توجد تراخيص مسجلة بعد</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--slate);">لا توجد تراخيص مسجلة بعد</td></tr>';
       return;
     }
 
@@ -1929,11 +1984,46 @@ async function loadLicenses() {
       const isExp = exp && Date.now() > exp.getTime();
       const hasDevice = !!(l.deviceId || l.deviceHash);
 
+      const lastActive = l.lastActiveAt || l.lastValidatedAt || null;
+      let lastMillis = 0;
+      if (lastActive) {
+        lastMillis = typeof lastActive === 'number' ? lastActive : (lastActive.seconds ? lastActive.seconds * 1000 : new Date(lastActive).getTime());
+      }
+      const isOnline = lastMillis > 0 && (now - lastMillis) <= (10 * 60 * 1000);
+
+      let timeText = 'غير متصل';
+      if (lastMillis > 0) {
+        const diffSec = Math.floor((now - lastMillis) / 1000);
+        if (diffSec < 60) timeText = 'منذ ثوانٍ';
+        else if (diffSec < 3600) timeText = `منذ ${Math.floor(diffSec / 60)} دقيقة`;
+        else if (diffSec < 86400) timeText = `منذ ${Math.floor(diffSec / 3600)} ساعة`;
+        else timeText = `منذ ${Math.floor(diffSec / 86400)} يوم`;
+      }
+
+      const ver = (l.appVersion || '1.0.1').trim();
+      const isLatestVer = ver === '1.0.2';
+
       return `
         <tr>
           <td><b style="font-family:monospace;font-size:14px;color:var(--primary);">${l.key}</b></td>
           <td><b>${l.customerName || '—'}</b></td>
           <td>${l.cafeName || '—'}</td>
+          <td>
+            ${isLatestVer ? 
+              `<span class="badge-pill" style="background:#D1FAE5;color:#065F46;font-weight:800;font-size:11.5px;">v${ver} ✅ مُحدَّث</span>` : 
+              `<span class="badge-pill" style="background:#FEF3C7;color:#92400E;font-weight:800;font-size:11.5px;">v${ver} ⚠️ قديم</span>`}
+          </td>
+          <td>
+            ${isOnline ? 
+              `<span style="display:inline-flex;align-items:center;gap:6px;color:#059669;font-weight:800;font-size:12px;">
+                <span style="width:9px;height:9px;border-radius:50%;background:#10B981;box-shadow:0 0 8px #10B981;display:inline-block;"></span> 
+                متصل الآن
+              </span>` : 
+              `<span style="color:var(--slate);font-size:11.5px;display:inline-flex;align-items:center;gap:4px;">
+                <span style="width:7px;height:7px;border-radius:50%;background:#CBD5E1;display:inline-block;"></span> 
+                ${timeText}
+              </span>`}
+          </td>
           <td dir="ltr" style="text-align:right;">${l.customerEmail || '—'}</td>
           <td style="font-size:12px;">
             ${exp ? exp.toLocaleDateString('ar-LY') : 'دائم'}
@@ -1945,7 +2035,7 @@ async function loadLicenses() {
               '<span class="badge-pill" style="background:#F1F5F9;color:var(--slate);">معطل ❌</span>'}
           </td>
           <td style="font-size:11px;">
-            ${hasDevice ? '<span style="color:var(--green)">مرتبط بجهاز 🔒</span>' : '<span style="color:var(--slate)">غير مرتبط (جاهز) 🔓</span>'}
+            ${hasDevice ? '<span style="color:var(--green)">مرتبط 🔒</span>' : '<span style="color:var(--slate)">جاهز 🔓</span>'}
           </td>
           <td>
             <div style="display:flex;gap:4px;">

@@ -29719,7 +29719,7 @@ This typically indicates that your device does not have a healthy Internet conne
         if (value instanceof Date) return value.getTime();
         return null;
       }
-      async function checkLicense(key, deviceId) {
+      async function checkLicense(key, deviceId, appVersion = "1.0.2") {
         if (!isFirebaseConfigured()) return { valid: false, reason: "licensing-not-configured" };
         const cleanKey = String(key || "").trim();
         if (!cleanKey) return { valid: false, reason: "not-found" };
@@ -29749,7 +29749,10 @@ This typically indicates that your device does not have a healthy Internet conne
           }
           const updates = {
             deviceHash: hashedDevice,
-            lastValidatedAt: serverTimestamp()
+            appVersion: String(appVersion || "1.0.2"),
+            lastValidatedAt: serverTimestamp(),
+            lastActiveAt: serverTimestamp(),
+            online: true
           };
           if (!license2.activatedAt) {
             updates.activatedAt = serverTimestamp();
@@ -29770,7 +29773,24 @@ This typically indicates that your device does not have a healthy Internet conne
           return { valid: false, reason: "network-error" };
         }
       }
-      module.exports = { checkLicense, isFirebaseConfigured };
+      async function pingHeartbeat(key, appVersion = "1.0.2") {
+        if (!isFirebaseConfigured()) return;
+        const cleanKey = String(key || "").trim();
+        if (!cleanKey) return;
+        try {
+          const { getFirestore, doc, updateDoc, serverTimestamp } = require_index_cjs7();
+          const app = getFirebaseApp();
+          const db = getFirestore(app);
+          const docRef = doc(db, "licenses", cleanKey);
+          await updateDoc(docRef, {
+            appVersion: String(appVersion || "1.0.2"),
+            lastActiveAt: serverTimestamp(),
+            online: true
+          });
+        } catch (_) {
+        }
+      }
+      module.exports = { checkLicense, pingHeartbeat, isFirebaseConfigured };
     }
   });
 
@@ -30746,6 +30766,9 @@ This typically indicates that your device does not have a healthy Internet conne
       });
     }
     syncToCloud();
+    if (state.licenseInfo && state.licenseInfo.licenseKey && license.pingHeartbeat) {
+      license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+    }
     renderMain();
   }
   function openProductModal(mode, id) {
@@ -30993,6 +31016,13 @@ This typically indicates that your device does not have a healthy Internet conne
       }, 1200);
     } else if (result && result.error) {
       showToast("\u062A\u0639\u0630\u0651\u0631\u062A \u0627\u0644\u0627\u0633\u062A\u0639\u0627\u062F\u0629: " + result.error);
+    }
+  }
+  async function openBackupsFolder() {
+    if (window.electronAPI && window.electronAPI.openBackupsFolder) {
+      await window.electronAPI.openBackupsFolder();
+    } else {
+      showToast("\u0641\u062A\u062D \u0627\u0644\u0645\u062C\u0644\u062F \u0645\u062A\u0627\u062D \u0641\u064A \u062A\u0637\u0628\u064A\u0642 \u0633\u0637\u062D \u0627\u0644\u0645\u0643\u062A\u0628 \u0641\u0642\u0637");
     }
   }
   async function saveReceiptSettings(e) {
@@ -31413,6 +31443,22 @@ This typically indicates that your device does not have a healthy Internet conne
             <span class="search-icon">${icon("search", 16)}</span>
           </div>
         </div>
+        ${(() => {
+      const lowItems = state.products.filter((p) => p.trackStock !== false && p.stock <= p.threshold);
+      if (lowItems.length === 0) return "";
+      return `
+            <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:6px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#92400E;">
+              <span style="display:flex;align-items:center;gap:6px;">
+                <span>\u26A0\uFE0F</span>
+                <b>\u062A\u0646\u0628\u064A\u0647 \u0645\u062E\u0632\u0648\u0646:</b>
+                <span>\u064A\u0648\u062C\u062F ${lowItems.length} \u0635\u0646\u0641 \u0642\u0627\u0631\u0628 \u0639\u0644\u0649 \u0627\u0644\u0646\u0641\u0627\u062F (${lowItems.slice(0, 3).map((p) => `${p.name}: ${p.stock}`).join("\u060C ")}${lowItems.length > 3 ? "..." : ""})</span>
+              </span>
+              <button type="button" style="background:#F59E0B;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="setView('inventory')">
+                \u0627\u0644\u0645\u062E\u0632\u0648\u0646 \u2190
+              </button>
+            </div>
+          `;
+    })()}
         <div class="pill-row">
           ${CATEGORIES.map((c) => `<button class="pill ${state.category === c ? "active" : ""}" onclick="setCategory('${c}')">${c}</button>`).join("")}
         </div>
@@ -31558,12 +31604,15 @@ This typically indicates that your device does not have a healthy Internet conne
     </div>
 
     <div style="max-width:500px;margin-top:20px" class="card panel">
-      <h3 style="margin-bottom:6px">${icon("download", 16)} \u0627\u0644\u0646\u0633\u062E \u0627\u0644\u0627\u062D\u062A\u064A\u0627\u0637\u064A</h3>
-      <p class="field-hint" style="margin-bottom:14px">\u0635\u062F\u0651\u0631 \u0646\u0633\u062E\u0629 \u0645\u0646 \u0643\u0644 \u0628\u064A\u0627\u0646\u0627\u062A\u0643 (\u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A\u060C \u0627\u0644\u0645\u0628\u064A\u0639\u0627\u062A\u060C \u0627\u0644\u0648\u0631\u062F\u064A\u0627\u062A) \u0643\u0645\u0644\u0641 \u062A\u0642\u062F\u0631 \u062A\u062D\u0641\u0638\u0647 \u0628\u0645\u0643\u0627\u0646 \u0622\u0645\u0646\u060C \u0623\u0648 \u062A\u0633\u062A\u0639\u064A\u062F\u0647 \u0644\u0627\u062D\u0642\u064B\u0627 \u0639\u0644\u0649 \u0623\u064A \u062C\u0647\u0627\u0632.</p>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="exportBackup()">${icon("download", 15)} \u062A\u0635\u062F\u064A\u0631 \u0646\u0633\u062E\u0629 \u0627\u062D\u062A\u064A\u0627\u0637\u064A\u0629</button>
+      <h3 style="margin-bottom:6px">${icon("download", 16)} \u0627\u0644\u0646\u0633\u062E \u0627\u0644\u0627\u062D\u062A\u064A\u0627\u0637\u064A \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A \u0648\u0627\u0644\u064A\u062F\u0648\u064A</h3>
+      <p class="field-hint" style="margin-bottom:12px">\u064A\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 \u0646\u0633\u062E\u0629 \u0627\u062D\u062A\u064A\u0627\u0637\u064A\u0629 \u062A\u0644\u0642\u0627\u0626\u064A\u0627\u064B \u0643\u0644 \u064A\u0648\u0645 \u0639\u0646\u062F \u062A\u0642\u0641\u064A\u0644 \u0627\u0644\u0648\u0631\u062F\u064A\u0629. \u064A\u0645\u0643\u0646\u0643 \u0623\u064A\u0636\u0627\u064B \u062D\u0641\u0638 \u0646\u0633\u062E\u0629 \u064A\u062F\u0648\u064A\u0629 \u0623\u0648 \u0627\u0633\u062A\u0639\u0627\u062F\u0629 \u0646\u0633\u062E\u0629 \u0633\u0627\u0628\u0642\u0629 \u0641\u064A \u0623\u064A \u0648\u0642\u062A.</p>
+      <div style="display:flex;gap:10px;margin-bottom:10px">
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="exportBackup()">${icon("download", 15)} \u062A\u0635\u062F\u064A\u0631 \u0646\u0633\u062E\u0629 \u064A\u062F\u0648\u064A\u0629</button>
         <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="restoreBackup()">${icon("refresh", 15)} \u0627\u0633\u062A\u0639\u0627\u062F\u0629 \u0646\u0633\u062E\u0629</button>
       </div>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:12.5px" onclick="openBackupsFolder()">
+        \u{1F4C1} \u0641\u062A\u062D \u0645\u062C\u0644\u062F \u0627\u0644\u0646\u0633\u062E \u0627\u0644\u0627\u062D\u062A\u064A\u0627\u0637\u064A\u0629 \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A\u0629
+      </button>
     </div>
 
     <div style="max-width:500px;margin-top:20px" class="card panel">
@@ -31997,7 +32046,8 @@ This typically indicates that your device does not have a healthy Internet conne
       state.licenseState = "needs-key";
       return;
     }
-    const result = await license.checkLicense(info.licenseKey, info.deviceId).catch(() => ({ valid: false, reason: "network-error" }));
+    const appVer = state.appVersion || "1.0.2";
+    const result = await license.checkLicense(info.licenseKey, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
     if (result.valid) {
       const saved = await window.electronAPI.dbSaveLicenseValidation({
         key: info.licenseKey,
@@ -32037,7 +32087,8 @@ This typically indicates that your device does not have a healthy Internet conne
     state.licenseState = "checking";
     render();
     const info = state.licenseInfo || await window.electronAPI.dbGetLicenseInfo();
-    const result = await license.checkLicense(key, info.deviceId).catch(() => ({ valid: false, reason: "network-error" }));
+    const appVer = state.appVersion || "1.0.2";
+    const result = await license.checkLicense(key, info.deviceId, appVer).catch(() => ({ valid: false, reason: "network-error" }));
     if (result.valid) {
       const saved = await window.electronAPI.dbSaveLicenseValidation({ key, customerName: result.customerName, expiresAt: result.expiresAt });
       state.licenseInfo = saved;
@@ -32116,7 +32167,8 @@ This typically indicates that your device does not have a healthy Internet conne
       setInterval(enforceLicenseExpiration, 30 * 1e3);
       setInterval(async () => {
         if (state.licenseState === "valid" && state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
-          const res = await license.checkLicense(state.licenseInfo.licenseKey, state.licenseInfo.deviceId).catch(() => null);
+          const appVer = state.appVersion || "1.0.2";
+          const res = await license.checkLicense(state.licenseInfo.licenseKey, state.licenseInfo.deviceId, appVer).catch(() => null);
           if (res && !res.valid) {
             state.licenseState = "invalid";
             const reasons = {
@@ -32130,6 +32182,11 @@ This typically indicates that your device does not have a healthy Internet conne
           }
         }
       }, 60 * 60 * 1e3);
+      setInterval(() => {
+        if (state.licenseInfo && state.licenseInfo.licenseKey && navigator.onLine) {
+          license.pingHeartbeat(state.licenseInfo.licenseKey, state.appVersion || "1.0.2");
+        }
+      }, 2 * 60 * 1e3);
     } else {
       render();
     }
@@ -32235,6 +32292,7 @@ This typically indicates that your device does not have a healthy Internet conne
     savePurchase,
     exportBackup,
     restoreBackup,
+    openBackupsFolder,
     submitLicenseKey,
     retryLicenseCheck,
     enterNewLicenseKey,
