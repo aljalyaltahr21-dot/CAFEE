@@ -14,32 +14,36 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
 <title>بوابة إدارة المقاهي والتراخيص السحابية ☕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Pacifico&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif; }
   
   :root {
-    --primary: #1D4ED8;
-    --primary-hover: #1E40AF;
-    --primary-light: #EFF6FF;
-    --primary-border: #BFDBFE;
-    --navy: #0F172A;
-    --navy-light: #1E293B;
-    --slate: #64748B;
-    --border: #E2E8F0;
-    --bg: #F8FAFC;
+    --primary: #63262E;
+    --primary-hover: #4E1D24;
+    --primary-light: #FDF2F0;
+    --primary-border: #E8D4D2;
+    --navy: #231815;
+    --navy-light: #382522;
+    --slate: #7E706D;
+    --border: #EDE5E2;
+    --bg: #F8F5F2;
     --white: #FFFFFF;
     --green: #10B981;
-    --green-light: #D1FAE5;
+    --green-light: #ECFDF5;
     --red: #EF4444;
     --red-light: #FEE2E2;
-    --gold: #F59E0B;
+    --gold: #D97706;
     --gold-light: #FEF3C7;
-    --shadow-card: 0 12px 35px -5px rgba(29, 78, 216, 0.12), 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+    --shadow-card: 0 20px 50px -5px rgba(99, 38, 46, 0.2), 0 4px 16px -2px rgba(35, 24, 21, 0.08);
   }
 
   body {
-    background: radial-gradient(circle at 10% 20%, #EFF6FF 0%, #F8FAFC 50%, #DBEAFE 100%);
+    background-color: #8C4334;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 20%),
+      radial-gradient(circle at 90% 80%, rgba(0, 0, 0, 0.15) 0%, transparent 35%),
+      radial-gradient(circle at 50% 50%, #6E3226 0%, #4D1D16 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -67,7 +71,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     left: 0;
     right: 0;
     height: 6px;
-    background: linear-gradient(90deg, #1D4ED8 0%, #3B82F6 50%, #60A5FA 100%);
+    background: linear-gradient(90deg, #63262E 0%, #8C4334 50%, #D97706 100%);
   }
 
   .brand-header {
@@ -79,20 +83,21 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     width: 60px;
     height: 60px;
     border-radius: 18px;
-    background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+    background: linear-gradient(135deg, #63262E, #8C4334);
     color: #fff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 28px;
-    box-shadow: 0 8px 20px rgba(29, 78, 216, 0.25);
+    box-shadow: 0 8px 20px rgba(99, 38, 46, 0.28);
     margin-bottom: 12px;
   }
 
   .brand-title {
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--navy);
+    font-family: 'Pacifico', cursive;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
     line-height: 1.2;
   }
 
@@ -100,7 +105,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     font-size: 13px;
     color: var(--slate);
     margin-top: 5px;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* تبويبات طرق الدخول */

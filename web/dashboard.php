@@ -15,180 +15,320 @@ $role = $user['role'] ?? 'customer';
 <title>لوحة التحكم السحابية - نظام إدارة المقاهي ☕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Pacifico&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
   
   :root {
-    --primary: #1D4ED8;
-    --primary-dark: #1E40AF;
-    --primary-light: #EFF6FF;
-    --primary-border: #BFDBFE;
-    --navy: #0F172A;
-    --navy-surface: #1E293B;
-    --slate: #64748B;
-    --slate-light: #94A3B8;
-    --border: #E2E8F0;
-    --bg: #F8FAFC;
+    --primary: #63262E;          /* لون البرغندي والقهوة الفاخر */
+    --primary-dark: #4E1D24;
+    --primary-light: #FDF2F0;
+    --primary-border: #E8D4D2;
+    --navy: #231815;             /* لون حبوب القهوة الداكنة */
+    --navy-surface: #382522;
+    --slate: #7E706D;
+    --slate-light: #A89B98;
+    --border: #EDE5E2;
+    --border-light: #F4EFEB;
+    --bg: #F8F5F2;               /* لون الخلفية الكريمة الدافئة */
     --white: #FFFFFF;
     --green: #10B981;
-    --green-light: #D1FAE5;
+    --green-light: #ECFDF5;
     --green-dark: #065F46;
     --red: #EF4444;
     --red-light: #FEE2E2;
-    --gold: #F59E0B;
+    --gold: #D97706;
     --gold-light: #FEF3C7;
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 14px rgba(15,23,42,0.06);
-    --shadow-lg: 0 12px 30px rgba(29, 78, 216, 0.09);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 2px 8px rgba(99, 38, 46, 0.04);
+    --shadow-md: 0 8px 24px rgba(99, 38, 46, 0.08);
+    --shadow-lg: 0 20px 50px rgba(99, 38, 46, 0.12);
   }
 
   body {
-    background: var(--bg);
-    color: var(--navy);
+    background-color: #8C4334;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 20%),
+      radial-gradient(circle at 90% 80%, rgba(0, 0, 0, 0.15) 0%, transparent 35%),
+      radial-gradient(circle at 50% 50%, #6E3226 0%, #4D1D16 100%);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ====== شريط علوي أنيق أزرق ====== */
-  .topbar {
-    background: var(--white);
-    border-bottom: 1.5px solid var(--border);
-    padding: 0 28px;
-    height: 66px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .brand-area {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .brand-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #1D4ED8, #3B82F6);
-    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+    padding: 16px;
+    color: var(--navy);
   }
 
-  .brand-title {
-    font-size: 18px;
+  /* إطار التطبيق السحابي الفخم (بنمط تصميم القهوة العالمي) */
+  .app-viewport {
+    width: 100%;
+    max-width: 1440px;
+    height: 94vh;
+    min-height: 720px;
+    background: #FAF8F6;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* القائمة الجانبية (Sidebar) */
+  .sidebar {
+    background: #FFFFFF;
+    border-left: 1.5px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 8px;
+    z-index: 10;
+  }
+
+  .brand-logo {
+    font-family: 'Pacifico', cursive;
+    color: var(--primary);
+    font-size: 26px;
+    margin-bottom: 28px;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    align-items: center;
+    flex: 1;
+  }
+
+  .nav-item {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--slate);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    position: relative;
+  }
+
+  .nav-item svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+    transition: transform 0.2s;
+  }
+
+  .nav-item:hover {
+    color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+  }
+
+  .nav-item.active {
+    background: var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 8px 18px rgba(99, 38, 46, 0.3);
+  }
+
+  .nav-item.active svg {
+    stroke: #FFFFFF;
+  }
+
+  .tab-badge {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    background: var(--red);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+  }
+
+  .sidebar-bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  /* منطقة المحتوى والترويسة (Main Workspace) */
+  .main-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: #FAF8F6;
+  }
+
+  .main-header {
+    background: #FFFFFF;
+    border-bottom: 1.5px solid var(--border-light);
+    padding: 0 28px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+
+  .page-title {
+    font-size: 20px;
     font-weight: 900;
     color: var(--navy);
-    line-height: 1.1;
   }
 
-  .brand-sub {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--slate);
+  .search-box {
+    position: relative;
+    width: 320px;
   }
 
-  .user-area {
+  .search-input {
+    width: 100%;
+    height: 44px;
+    background: #F9F7F5;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 0 46px 0 18px;
+    font-size: 13px;
+    color: var(--navy);
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    border-color: var(--primary);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(99, 38, 46, 0.12);
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    stroke: var(--slate);
+    fill: none;
+    pointer-events: none;
+  }
+
+  .header-right {
     display: flex;
     align-items: center;
     gap: 12px;
   }
 
-  .role-badge {
+  .user-chip {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
+    gap: 10px;
+    padding: 5px 14px 5px 6px;
+    background: #FDFBF9;
+    border: 1.5px solid var(--border);
     border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 800;
-  }
-  .role-admin   { background: #EFF6FF; color: #1D4ED8; border: 1.5px solid #BFDBFE; }
-  .role-manager { background: #FEF3C7; color: #B45309; border: 1.5px solid #FDE68A; }
-  .role-customer{ background: #ECFDF5; color: #047857; border: 1.5px solid #A7F3D0; }
-
-  .btn-logout {
-    padding: 7px 14px;
-    background: #F1F5F9;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--slate);
-    font-size: 12.5px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-logout:hover {
-    background: var(--red-light);
-    color: var(--red);
-    border-color: #FECACA;
   }
 
-  /* ====== شريط التبويبات والتنقل ====== */
-  .nav-bar {
-    background: var(--white);
-    border-bottom: 1.5px solid var(--border);
-    padding: 0 28px;
+  .user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary-border);
+  }
+
+  .user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .user-details {
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
+    flex-direction: column;
+    line-height: 1.25;
   }
 
-  .nav-tab {
-    padding: 13px 18px;
-    font-size: 13.5px;
-    font-weight: 800;
-    color: var(--slate);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
-
-  .nav-tab:hover {
-    color: var(--primary);
-  }
-
-  .nav-tab.active {
-    color: var(--primary);
-    border-bottom-color: var(--primary);
-  }
-
-  .tab-badge {
-    padding: 2px 7px;
-    border-radius: 999px;
+  .user-role-label {
     font-size: 10.5px;
-    font-weight: 900;
-    background: var(--red);
-    color: #fff;
+    font-weight: 700;
+    color: var(--primary);
   }
 
-  /* ====== المحتوى الرئيسي ====== */
+  .user-name-text {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+
+  .bell-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    color: var(--slate);
+    transition: all 0.2s;
+  }
+
+  .bell-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .bell-btn .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    border: 1.5px solid #FFFFFF;
+  }
+
+  /* المحتوى الرئيسي */
   .main-content {
     flex: 1;
-    max-width: 1280px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 24px 20px;
+    overflow-y: auto;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
   /* بطاقات الإحصائيات العلوية */
@@ -623,67 +763,130 @@ $role = $user['role'] ?? 'customer';
 
 <div id="toast" class="toast"></div>
 
-<!-- الشريط العلوي -->
-<header class="topbar">
-  <div class="brand-area">
-    <div class="brand-logo">☕</div>
-    <div>
-      <div class="brand-title">نظام إدارة المقاهي السحابي</div>
-      <div class="brand-sub">لوحة التراخيص والمبيعات والمخزون</div>
+<!-- إطار التطبيق السحابي الفخم (بنمط تصميم القهوة العالمي) -->
+<div class="app-viewport">
+
+  <!-- القائمة الجانبية العمودية (Sidebar) -->
+  <aside class="sidebar">
+    <a href="dashboard.php" class="brand-logo" title="لوحة إدارة المقاهي">coffee</a>
+
+    <div class="nav-list">
+      <?php if ($role === 'customer'): ?>
+        <button class="nav-item nav-tab active" onclick="switchView('my_products')" title="أصنافي ومخزوني">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <span>الأصناف</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('my_sales')" title="المبيعات">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          <span>المبيعات</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('my_license')" title="الترخيص والاشتراك">
+          <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-1.5 1.5L16 7l-1.5-1.5-2 2 1.5 1.5L12 11l-1.5-1.5-2 2 1.5 1.5L8 15l-1.5-1.5-2 2 1.5 1.5L4 19l-2 2"></path><circle cx="7.5" cy="7.5" r="4.5"></circle></svg>
+          <span>الترخيص</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('my_modifications')" title="طلباتي">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>تعديلاتي</span>
+        </button>
+      <?php elseif ($role === 'manager'): ?>
+        <button class="nav-item nav-tab active" onclick="switchView('license_requests')" title="طلبات التراخيص">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>الطلبات</span>
+          <span class="tab-badge" id="badgePendingLicReq" style="display:none;">0</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('modifications')" title="التعديلات">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>تعديلات</span>
+          <span class="tab-badge" id="badgePendingMods" style="display:none;">0</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('licenses')" title="جميع التراخيص">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>التراخيص</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('all_branches')" title="المقاهي والأصناف">
+          <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+          <span>المقاهي</span>
+        </button>
+      <?php else: /* admin */ ?>
+        <button class="nav-item nav-tab active" onclick="switchView('licenses')" title="إدارة التراخيص">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>التراخيص</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('license_requests')" title="طلبات التراخيص">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>الطلبات</span>
+          <span class="tab-badge" id="badgePendingLicReq" style="display:none;">0</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('modifications')" title="طلبات التعديلات">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>تعديلات</span>
+          <span class="tab-badge" id="badgePendingMods" style="display:none;">0</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('users')" title="المستخدمين والعملاء">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>العملاء</span>
+        </button>
+        <button class="nav-item nav-tab" onclick="switchView('all_branches')" title="مبيعات وأصناف المقاهي">
+          <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+          <span>المقاهي</span>
+        </button>
+      <?php endif; ?>
     </div>
-  </div>
 
-  <div class="user-area">
-    <a href="pos.php" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#63262E,#8C4334);color:#fff;padding:8px 16px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:800;box-shadow:0 4px 12px rgba(99,38,46,0.25);margin-left:8px;">
-      <span>☕</span>
-      <span>شاشة الكاشير (Web POS)</span>
-    </a>
-    <?php if ($role === 'admin'): ?>
-      <div class="role-badge role-admin">👑 المدير العام (الأدمن)</div>
-    <?php elseif ($role === 'manager'): ?>
-      <div class="role-badge role-manager">👔 مدير العمليات (Manager)</div>
-    <?php else: ?>
-      <div class="role-badge role-customer">☕ <?= htmlspecialchars($user['cafeName'] ?: $user['name']) ?></div>
-    <?php endif; ?>
-    <button class="btn-logout" onclick="logout()">خروج 🚪</button>
-  </div>
-</header>
+    <div class="sidebar-bottom">
+      <a href="pos.php" class="nav-item" title="شاشة الكاشير السحابية (POS)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>POS</span>
+      </a>
+      <a href="download.php" class="nav-item" title="تنزيل برنامج الكاشير">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>البرنامج</span>
+      </a>
+      <button class="nav-item" onclick="logout()" title="تسجيل الخروج">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <span>خروج</span>
+      </button>
+    </div>
+  </aside>
 
-<!-- شريط التبويبات حسب الدور -->
-<nav class="nav-bar">
-  <?php if ($role === 'customer'): ?>
-    <button class="nav-tab active" onclick="switchView('my_products')">📦 أصنافي ومخزوني</button>
-    <button class="nav-tab" onclick="switchView('my_sales')">📊 مبيعاتي</button>
-    <button class="nav-tab" onclick="switchView('my_license')">🔑 رخصتي والاشتراك</button>
-    <button class="nav-tab" onclick="switchView('my_modifications')">🛠️ طلباتي وتعديلاتي</button>
-  <?php elseif ($role === 'manager'): ?>
-    <button class="nav-tab active" onclick="switchView('license_requests')">
-      📥 طلبات التراخيص
-      <span class="tab-badge" id="badgePendingLicReq" style="display:none;">0</span>
-    </button>
-    <button class="nav-tab" onclick="switchView('modifications')">
-      🛠️ طلبات التعديلات
-      <span class="tab-badge" id="badgePendingMods" style="display:none;">0</span>
-    </button>
-    <button class="nav-tab" onclick="switchView('licenses')">🔑 جميع التراخيص</button>
-    <button class="nav-tab" onclick="switchView('all_branches')">☕ مبيعات وأصناف المقاهي</button>
-  <?php else: /* admin */ ?>
-    <button class="nav-tab active" onclick="switchView('licenses')">🔑 إدارة التراخيص</button>
-    <button class="nav-tab" onclick="switchView('license_requests')">
-      📥 طلبات التراخيص
-      <span class="tab-badge" id="badgePendingLicReq" style="display:none;">0</span>
-    </button>
-    <button class="nav-tab" onclick="switchView('modifications')">
-      🛠️ طلبات التعديلات
-      <span class="tab-badge" id="badgePendingMods" style="display:none;">0</span>
-    </button>
-    <button class="nav-tab" onclick="switchView('users')">👥 العملاء والإيميلات</button>
-    <button class="nav-tab" onclick="switchView('all_branches')">☕ مبيعات وأصناف المقاهي</button>
-  <?php endif; ?>
-</nav>
+  <!-- منطقة المحتوى الرئيسية مع الرأس المطور (Main Workspace) -->
+  <div class="main-wrapper">
+    <header class="main-header">
+      <div class="header-left">
+        <h1 class="page-title" id="currentSectionTitle">
+          <?php if ($role === 'customer'): ?>أصنافي ومخزوني 📦<?php elseif ($role === 'manager'): ?>طلبات التراخيص والاشتراكات 📥<?php else: ?>إدارة التراخيص والمفاتيح 🔑<?php endif; ?>
+        </h1>
+      </div>
 
-<!-- المحتوى الرئيسي -->
-<main class="main-content">
+      <div class="header-center">
+        <div class="search-box">
+          <input type="text" id="globalSearchInput" class="search-input" placeholder="بحث سريع في التراخيص والأصناف..." oninput="handleGlobalSearch(this.value)" />
+          <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="user-chip">
+          <div class="user-avatar">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="avatar" />
+          </div>
+          <div class="user-details">
+            <span class="user-role-label">
+              <?php if ($role === 'admin'): ?>المدير العام 👑<?php elseif ($role === 'manager'): ?>مدير العمليات 👔<?php else: ?>صاحب المقهى ☕<?php endif; ?>
+            </span>
+            <span class="user-name-text"><?= htmlspecialchars($user['cafeName'] ?: $user['name']) ?></span>
+          </div>
+        </div>
+
+        <button class="bell-btn" title="التنبيهات" onclick="showToast('النظام متزامن ويعمل بشكل طبيعي')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span class="dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
 
   <!-- ==================== 1. قسم الكاستمير: بطاقة رخصتي ==================== -->
   <?php if ($role === 'customer'): ?>
@@ -1080,6 +1283,8 @@ $role = $user['role'] ?? 'customer';
   <?php endif; ?>
 
 </main>
+  </div><!-- .main-wrapper -->
+</div><!-- .app-viewport -->
 
 <!-- ==============================================================
      النوافذ المنبثقة (MODALS)
@@ -1335,6 +1540,20 @@ function switchView(viewName) {
   const clicked = Array.from(document.querySelectorAll('.nav-tab')).find(t => t.getAttribute('onclick')?.includes(viewName));
   if (clicked) clicked.classList.add('active');
 
+  const titleMap = {
+    'licenses': 'إدارة التراخيص والمفاتيح 🔑',
+    'license_requests': 'طلبات التراخيص والاشتراكات 📥',
+    'modifications': 'طلبات التعديلات والمميزات 🛠️',
+    'users': 'العملاء والمستخدمين 👥',
+    'all_branches': 'مبيعات وأصناف شبكة المقاهي ☕',
+    'my_products': 'أصنافي ومخزوني 📦',
+    'my_sales': 'مبيعات المقهى 📊',
+    'my_license': 'رخصتي والاشتراك 🔑',
+    'my_modifications': 'طلباتي وتعديلاتي 🛠️'
+  };
+  const titleEl = document.getElementById('currentSectionTitle');
+  if (titleEl && titleMap[viewName]) titleEl.textContent = titleMap[viewName];
+
   // تحميل البيانات الخاصة بالتبويب
   if (viewName === 'my_products' || viewName === 'my_sales' || viewName === 'my_license') {
     loadBranchState();
@@ -1349,6 +1568,19 @@ function switchView(viewName) {
   } else if (viewName === 'all_branches') {
     loadAllBranches();
   }
+}
+
+// بحث سريع في التراخيص والأصناف عبر شريط البحث العلوي
+function handleGlobalSearch(q) {
+  const query = q.toLowerCase().trim();
+  const activeView = Array.from(document.querySelectorAll('[id^="view-"]')).find(v => v.style.display !== 'none');
+  if (!activeView) return;
+  const rows = activeView.querySelectorAll('tbody tr');
+  rows.forEach(r => {
+    if (r.children.length === 1 && r.textContent.includes('لا توجد')) return;
+    const text = r.textContent.toLowerCase();
+    r.style.display = text.includes(query) ? '' : 'none';
+  });
 }
 
 // ===== إشعارات Toast =====
