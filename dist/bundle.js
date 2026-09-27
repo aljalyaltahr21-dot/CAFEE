@@ -31745,7 +31745,7 @@ This typically indicates that your device does not have a healthy Internet conne
     const u = state.update;
     if (!u || u.status === "idle" || u.status === "latest" || u.status === "error") return "";
     if (u.status === "checking") return "";
-    if (u.status === "available") return `<div class="update-banner update-ready">${icon("bell", 16)} \u062A\u062D\u062F\u064A\u062B \u062C\u062F\u064A\u062F \u0645\u062A\u0648\u0641\u0631 (v${u.version}) <button onclick="downloadAppUpdate()">\u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062A\u062D\u062F\u064A\u062B</button></div>`;
+    if (u.status === "available") return `<div class="update-banner update-ready">${icon("bell", 16)} \u062A\u062D\u062F\u064A\u062B \u062C\u062F\u064A\u062F \u0645\u062A\u0648\u0641\u0631 (v${u.version}) \u2014 \u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0645\u064A\u0644 \u062A\u0644\u0642\u0627\u0626\u064A\u0627\u064B...</div>`;
     if (u.status === "downloading") return `<div class="update-banner">${icon("download", 16)} \u064A\u062A\u0645 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062A\u062D\u062F\u064A\u062B... ${u.percent || 0}%</div>`;
     if (u.status === "ready") return `<div class="update-banner update-ready">${icon("check", 16)} \u0627\u0644\u062A\u062D\u062F\u064A\u062B \u062C\u0627\u0647\u0632 \u2014 <button onclick="restartToUpdate()">\u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u0622\u0646</button></div>`;
     return "";

@@ -36,6 +36,15 @@ function createWindow() {
 }
 
 function setupAutoUpdater() {
+  // إزالة خاصية القراءة فقط Read-Only عن ملف التثبيت المؤقت لتفادي أخطاء الأذونات في ويندوز
+  try {
+    const updaterCache = path.join(process.env.LOCALAPPDATA || path.join(app.getPath("home"), "AppData", "Local"), "cafe-pos-updater");
+    const installerFile = path.join(updaterCache, "installer.exe");
+    if (fs.existsSync(installerFile)) {
+      try { fs.chmodSync(installerFile, 0o666); } catch (_) {}
+    }
+  } catch (_) {}
+
   // تفعيل التحميل التلقائي في الخلفية وتثبيت التحديث عند إغلاق التطبيق
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
@@ -48,7 +57,8 @@ function setupAutoUpdater() {
   autoUpdater.on("update-downloaded", (info) => send({ status: "ready", version: info.version }));
   autoUpdater.on("error", (error) => {
     console.error("Update error:", error);
-    send({ status: "error", message: "تعذّر فحص أو تنزيل التحديث من السيرفر." });
+    const msg = String((error && error.message) || error);
+    send({ status: "error", message: msg || "تعذّر فحص أو تنزيل التحديث من السيرفر." });
   });
 
   // فحص أولي عند التشغيل
@@ -79,8 +89,12 @@ ipcMain.handle("download-update", async () => {
     await autoUpdater.downloadUpdate();
     return { ok: true };
   } catch (error) {
+    const msg = String((error && error.message) || error);
+    if (msg.toLowerCase().includes("already") || msg.toLowerCase().includes("in progress")) {
+      return { ok: true };
+    }
     console.error("Download update error:", error);
-    return { ok: false, error: String(error.message || error) };
+    return { ok: false, error: msg };
   }
 });
 

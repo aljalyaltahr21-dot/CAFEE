@@ -2022,7 +2022,7 @@ function renderUpdateBanner() {
   const u = state.update;
   if (!u || u.status === "idle" || u.status === "latest" || u.status === "error") return "";
   if (u.status === "checking") return "";
-  if (u.status === "available") return `<div class="update-banner update-ready">${icon("bell", 16)} تحديث جديد متوفر (v${u.version}) <button onclick="downloadAppUpdate()">تحميل التحديث</button></div>`;
+  if (u.status === "available") return `<div class="update-banner update-ready">${icon("bell", 16)} تحديث جديد متوفر (v${u.version}) — جارٍ التحميل تلقائياً...</div>`;
   if (u.status === "downloading") return `<div class="update-banner">${icon("download", 16)} يتم تحميل التحديث... ${u.percent || 0}%</div>`;
   if (u.status === "ready") return `<div class="update-banner update-ready">${icon("check", 16)} التحديث جاهز — <button onclick="restartToUpdate()">إعادة التشغيل الآن</button></div>`;
   return "";
