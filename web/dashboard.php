@@ -49,32 +49,26 @@ $role = $user['role'] ?? 'customer';
   }
 
   body {
-    background-color: #8C4334;
-    background-image: 
-      radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 20%),
-      radial-gradient(circle at 90% 80%, rgba(0, 0, 0, 0.15) 0%, transparent 35%),
-      radial-gradient(circle at 50% 50%, #6E3226 0%, #4D1D16 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
+    background: #FAF8F6;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     color: var(--navy);
   }
 
-  /* إطار التطبيق السحابي الفخم (بنمط تصميم القهوة العالمي) */
+  /* إطار التطبيق السحابي بكامل كِبر الشاشة بدون أي فراغات جانبية */
   .app-viewport {
-    width: 100%;
-    max-width: 1440px;
-    height: 94vh;
-    min-height: 720px;
+    width: 100vw;
+    height: 100vh;
     background: #FAF8F6;
-    border-radius: var(--radius-xl);
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+    border-radius: 0;
+    box-shadow: none;
     display: grid;
     grid-template-columns: 88px 1fr;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: none;
   }
 
   /* القائمة الجانبية (Sidebar) */

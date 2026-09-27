@@ -5,13 +5,11 @@
 // ===========================================================
 
 session_start();
-$user = $_SESSION['portal_user'] ?? [
-    'email' => 'cashier@cafe.ly',
-    'name' => 'طاهر الجالي',
-    'role' => 'cashier',
-    'cafeName' => 'كافيه دي بوينت',
-    'branchId' => 'main'
-];
+$user = $_SESSION['portal_user'] ?? null;
+if (!$user) {
+    header("Location: index.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -20,7 +18,7 @@ $user = $_SESSION['portal_user'] ?? [
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>نقطة البيع السحابية | Coffee POS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
   
   <style>
@@ -57,32 +55,26 @@ $user = $_SESSION['portal_user'] ?? [
     }
 
     body {
-      background-color: #8C4334;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(0, 0, 0, 0.15) 0%, transparent 35%),
-        radial-gradient(circle at 50% 50%, #6E3226 0%, #4D1D16 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
+      background: #FAFAF9;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       color: var(--text-main);
     }
 
-    /* الحاوية الأساسية للتطبيق */
+    /* الحاوية الأساسية للتطبيق بكامل كبر الشاشة */
     .app-viewport {
-      width: 100%;
-      max-width: 1440px;
-      height: 94vh;
-      min-height: 720px;
+      width: 100vw;
+      height: 100vh;
       background: #FAFAF9;
-      border-radius: var(--radius-lg);
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+      border-radius: 0;
+      box-shadow: none;
       display: grid;
       grid-template-columns: 88px 1fr 390px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: none;
     }
 
     /* ================= 1. القائمة الجانبية (Sidebar) ================= */
