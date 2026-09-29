@@ -245,8 +245,9 @@ if (!$user) {
     }
 
     .category-card {
-      min-width: 82px;
-      height: 82px;
+      flex: 1;
+      min-width: 95px;
+      height: 84px;
       background: #FFFFFF;
       border: 1.5px solid var(--border);
       border-radius: 16px;

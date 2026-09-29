@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../services/update_service.dart';
 
 class PosSidebar extends StatelessWidget {
   final int activeIndex;
@@ -118,27 +119,31 @@ class PosSidebar extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.greenLight,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.green.withValues(alpha: 0.25)),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.check_circle_rounded, size: 16, color: AppTheme.green),
-                          SizedBox(width: 6),
-                          Text(
-                            'إصدار سامسونج v1.0.0 (أحدث نسخة)',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: AppTheme.green,
+                    InkWell(
+                      onTap: () => UpdateService.checkManually(context),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.greenLight,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppTheme.green.withValues(alpha: 0.25)),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.system_update_alt_rounded, size: 16, color: AppTheme.green),
+                            SizedBox(width: 6),
+                            Text(
+                              'فحص تحديثات سامسونج 🔄',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.green,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -233,16 +238,7 @@ class PosSidebar extends StatelessWidget {
 
           // Update Check Badge
           InkWell(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('نسخة سامسونج محدثة بالكامل (الإصدار v1.0.0) ✓'),
-                  backgroundColor: AppTheme.green,
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                ),
-              );
-            },
+            onTap: () => UpdateService.checkManually(context),
             borderRadius: BorderRadius.circular(10),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
@@ -256,7 +252,7 @@ class PosSidebar extends StatelessWidget {
                   Icon(Icons.system_update_alt_rounded, size: 16, color: AppTheme.green),
                   SizedBox(height: 2),
                   Text(
-                    'v1.0.0',
+                    'تحديث 🔄',
                     style: TextStyle(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w800,

@@ -5,6 +5,7 @@ import '../widgets/sidebar.dart';
 import '../widgets/category_bar.dart';
 import '../widgets/product_card.dart';
 import '../widgets/bills_panel.dart';
+import '../services/update_service.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({super.key});
@@ -23,6 +24,11 @@ class _PosScreenState extends State<PosScreen> {
     super.initState();
     _controller.addListener(() {
       if (mounted) setState(() {});
+    });
+
+    // Auto-check for Samsung / Android updates on launch
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateService.checkOnAppStart(context);
     });
   }
 
