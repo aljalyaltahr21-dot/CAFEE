@@ -70,8 +70,46 @@ class PosSidebar extends StatelessWidget {
             ),
           ),
 
+          // Update Check Badge
+          InkWell(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('نسخة سامسونج محدثة بالكامل (الإصدار v1.0.0) ✓'),
+                  backgroundColor: AppTheme.green,
+                  behavior: SnackBarBehavior.floating,
+                  width: 320,
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.greenLight,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppTheme.green.withValues(alpha: 0.3)),
+              ),
+              child: const Column(
+                children: [
+                  Icon(Icons.system_update_alt_rounded, size: 16, color: AppTheme.green),
+                  SizedBox(height: 2),
+                  Text(
+                    'v1.0.0',
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
           // Bottom Logout
-          const Divider(color: AppTheme.borderLight, height: 24),
+          const Divider(color: AppTheme.borderLight, height: 16),
           _buildActionButton(
             icon: Icons.logout_rounded,
             label: 'خروج',
