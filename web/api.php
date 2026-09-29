@@ -746,15 +746,16 @@ if ($action === 'list_all_branches') {
 // التحقق من تحديثات تطبيق سامسونج وأندرويد (Mobile / Samsung Update API)
 if ($action === 'check_mobile_update') {
     $clientVersion = $_GET['version'] ?? '1.0.0';
-    $latestVersion = '1.0.0';
+    $latestVersion = '1.0.1';
     $hasUpdate = version_compare($latestVersion, $clientVersion, '>');
 
     jsonResponse(true, [
         'latestVersion' => $latestVersion,
+        'clientVersion' => $clientVersion,
         'hasUpdate' => $hasUpdate,
         'downloadUrl' => 'https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk',
         'localDownloadUrl' => 'download.php?format=apk',
-        'releaseNotes' => 'إصدار نسخة سامسونج وأندرويد الرسمية (Flutter POS) مع التحديثات التلقائية المباشرة.',
+        'releaseNotes' => 'تحديث شامل: معالجة تداخل واجهات هاتف سامسونج، قائمة درج عصرية (Drawer)، وبطاقات انسيابية مع زر فاتورة عائم.',
         'updatedAt' => date('Y-m-d H:i:s')
     ]);
 }

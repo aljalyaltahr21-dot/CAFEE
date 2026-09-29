@@ -1197,6 +1197,7 @@ $role = $user['role'] ?? 'customer';
     </div>
 
     <!-- بطاقة تطبيق سامسونج وأندرويد مع التحديثات -->
+    <!-- بطاقة تطبيق سامسونج وأندرويد مع التحديثات المباشرة -->
     <div class="section-card" style="background:linear-gradient(135deg, #FDF2F0 0%, #FFFFFF 100%);border:2px solid var(--primary-border);margin-bottom:20px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
         <div style="display:flex;align-items:center;gap:16px;">
@@ -1206,18 +1207,21 @@ $role = $user['role'] ?? 'customer';
           <div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
               <h3 style="font-size:17px;font-weight:900;color:var(--navy);margin:0;">تطبيق الكاشير (نسخة سامسونج وأندرويد)</h3>
-              <span class="badge-pill" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;font-size:11px;">v1.0.0 أحدث إصدار</span>
-              <span class="badge-pill" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;font-size:11px;">🔄 التحديثات التلقائية مفعلة</span>
+              <span class="badge-pill" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;font-size:11px;">v1.0.1 أحدث إصدار</span>
+              <span class="badge-pill" style="background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;font-size:11px;">🚀 تحديث جديد متوفر</span>
             </div>
-            <p style="font-size:12px;color:var(--slate);margin-top:4px;">
-              مبني بإطار العمل Flutter وموجّه بالكامل لهواتف وألواح سامسونج (One UI) والأندرويد | كروت متساوية 100% وفواتير سريعة
+            <p style="font-size:12.5px;color:var(--slate);margin-top:4px;">
+              <b>ملاحظات التحديث v1.0.1:</b> تم حل تداخل عناصر الواجهة على الهواتف بالكامل، واعتماد بطاقات ديناميكية انسيابية مع درج تنقل فاخر وفاتورة عائمة.
             </p>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <a href="download.php?format=apk" class="btn btn-primary" style="padding:12px 22px;font-size:14px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
-            <span>📱</span> <b>تنزيل نسخة سامسونج (APK)</b>
+            <span>📱</span> <b>تحميل تحديث سامسونج (APK)</b>
           </a>
+          <button onclick="checkMobileUpdateLive()" class="btn btn-outline" style="padding:12px 16px;font-size:13px;color:#059669;border-color:#A7F3D0;background:#ECFDF5;cursor:pointer;">
+            <span>🔄</span> فحص التحديثات الآن
+          </button>
           <a href="flutter/" target="_blank" class="btn btn-outline" style="padding:12px 18px;font-size:13px;text-decoration:none;color:#0284C7;border-color:#BAE6FD;background:#F0F9FF;">
             <span>🌐</span> فتح كاشير فلاتر (ويب)
           </a>
@@ -1225,13 +1229,13 @@ $role = $user['role'] ?? 'customer';
       </div>
       <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--primary-border);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;font-size:12px;color:var(--primary);">
         <div style="display:flex;align-items:center;gap:6px;">
-          <span>✅</span> <span><b>توافق سامسونج:</b> يدعم Galaxy S, A, Note, Z Fold والأجهزة اللوحية Tab.</span>
+          <span>✅</span> <span><b>توافق سامسونج:</b> يدعم Galaxy S, A, Note, Z Fold وجميع أجهزة الأندرويد.</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;">
-          <span>🔄</span> <span><b>تحديثات مباشرة:</b> أي ميزة أو تعديل جديد يصله إشعار تحديث فوري داخل التطبيق.</span>
+          <span>🔄</span> <span><b>نظام التحديث:</b> التطبيق يفحص تلقائياً السيرفر ويعرض التحديث الفوري لأي ميزة مضافة.</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;">
-          <span>⚡</span> <span><b>مزامنة حية:</b> متصل مباشرة بقاعدة بيانات مقهاك ورخصتك السحابية.</span>
+          <span>⚡</span> <span><b>مزامنة حية:</b> متصل مباشرة بالسيرفر ورخصتك لإدارة الأصناف والمبيعات.</span>
         </div>
       </div>
     </div>
@@ -2820,13 +2824,29 @@ if (USER_ROLE === 'customer') {
   switchView('licenses');
 }
 
-// فحص دوري كل 60 ثانية لتحديث العدادات والطلبات
-setInterval(() => {
-  if (USER_ROLE !== 'customer') {
-    loadLicenseRequests();
-    loadModifications();
+// فحص تحديثات نسخة سامسونج وأندرويد الحية
+async function checkMobileUpdateLive() {
+  try {
+    showToast('جاري الاتصال بسيرفر التحديثات...', 'info');
+    const res = await fetch('api.php?action=check_mobile_update&version=1.0.0');
+    const data = await res.json();
+    if (data.ok) {
+      if (data.hasUpdate) {
+        alert('🚀 تحديث جديد متوفر لنسخة سامسونج!\n\n' +
+              '• رقم الإصدار الجديد: ' + data.latestVersion + '\n' +
+              '• ملاحظات التحديث: ' + data.releaseNotes + '\n\n' +
+              'سيتم توجيهك الآن لتحميل ملف التحديث (APK).');
+        window.location.href = data.localDownloadUrl || data.downloadUrl;
+      } else {
+        alert('✓ تطبيق سامسونج لديك يعمل بأحدث إصدار (' + data.latestVersion + ').\nلا توجد تحديثات جديدة حالياً.');
+      }
+    } else {
+      showToast('تعذر التحقق من التحديثات: ' + (data.error || 'خطأ غير معروف'), 'error');
+    }
+  } catch (err) {
+    showToast('فشل الاتصال بسيرفر التحديثات', 'error');
   }
-}, 60000);
+}
 </script>
 
 </body>
