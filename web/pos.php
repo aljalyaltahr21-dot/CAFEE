@@ -316,7 +316,9 @@ if (!$user) {
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-auto-rows: 1fr;        /* كل الصفوف نفس الارتفاع */
       gap: 16px;
+      align-items: stretch;       /* الكروت تمتد لنفس الارتفاع */
     }
 
     .product-card {
@@ -330,6 +332,8 @@ if (!$user) {
       gap: 12px;
       transition: all 0.25s ease;
       position: relative;
+      height: 100%;               /* يملأ خلية الـ grid كاملاً */
+      justify-content: space-between;  /* يوزع المحتوى بالتساوي */
     }
 
     .product-card:hover {
