@@ -1205,11 +1205,14 @@ $role = $user['role'] ?? 'customer';
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="download.php" class="btn btn-primary" style="padding:12px 24px;font-size:14px;gap:8px;text-decoration:none;background:#10B981;box-shadow:0 4px 14px rgba(16,185,129,0.35);">
-            <span>⬇️</span> <b>تحميل مباشر (.exe)</b>
+          <a href="download.php?format=apk" class="btn btn-primary" style="padding:12px 20px;font-size:13.5px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
+            <span>📱</span> <b>تطبيق الهاتف (Android APK)</b>
+          </a>
+          <a href="download.php" class="btn btn-primary" style="padding:12px 20px;font-size:13.5px;gap:8px;text-decoration:none;background:#10B981;box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+            <span>⬇️</span> <b>برنامج الكمبيوتر (.exe)</b>
           </a>
           <a href="download.php?format=zip" class="btn btn-outline" style="padding:12px 18px;font-size:13px;text-decoration:none;">
-            <span>📦</span> تحميل نسخة مضغوطة (.zip)
+            <span>📦</span> نسخة مضغوطة (.zip)
           </a>
         </div>
       </div>
