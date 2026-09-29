@@ -855,34 +855,173 @@ if (!$user) {
       margin: 16px 0;
     }
 
-    /* Responsive */
+    /* ============================================================
+       Responsive — Tablet (≤1100px)
+    ============================================================ */
     @media (max-width: 1100px) {
       .app-viewport {
-        grid-template-columns: 78px 1fr 340px;
+        grid-template-columns: 78px 1fr 320px;
       }
       .products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       }
     }
 
-    @media (max-width: 860px) {
-      body { padding: 0; }
+    /* ============================================================
+       Responsive — Mobile (≤768px)
+       POS layout: sidebar hidden, cart as bottom sheet toggle
+    ============================================================ */
+    @media (max-width: 768px) {
+      body { overflow: hidden; height: 100vh; }
+
       .app-viewport {
+        display: flex;
+        flex-direction: column;
         height: 100vh;
-        border-radius: 0;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr auto;
       }
+
+      /* إخفاء القائمة الجانبية */
       .sidebar { display: none; }
-      .bills-panel {
-        display: none; /* يمكن فتحها عبر تبويب سلة */
+
+      /* المنطقة الرئيسية تأخذ كل المساحة */
+      .main-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px;
+        gap: 14px;
+        -webkit-overflow-scrolling: touch;
       }
+
+      /* الهيدر أصغر */
+      .main-header {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .header-title-box h1 { font-size: 17px; }
+      .search-box { width: 100%; }
+
+      /* التصنيفات بحجم أصغر */
+      .category-card {
+        min-width: 70px;
+        height: 70px;
+        border-radius: 14px;
+      }
+      .category-card .cat-icon { font-size: 20px; }
+      .category-card .cat-label { font-size: 11px; }
+
+      /* شبكة المنتجات — عمود واحد */
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      /* حجم أصغر للبطاقات */
+      .card-img-wrap {
+        width: 70px;
+        height: 70px;
+      }
+      .card-title { font-size: 14px; }
+      .card-price { font-size: 14px; }
+
+      /* لوحة الفاتورة تظهر كـ bottom sheet عند الفتح */
+      .bills-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 75vh;
+        border-radius: 24px 24px 0 0;
+        border-right: none;
+        border-top: 1.5px solid var(--border-light);
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 200;
+        box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+      }
+      .bills-panel.cart-open {
+        transform: translateY(0);
+      }
+
+      /* زر إظهار/إخفاء السلة (FAB) */
+      .cart-fab {
+        display: flex !important;
+      }
+
+      /* overlay خلف السلة */
+      .cart-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(35, 24, 21, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: 190;
+      }
+      .cart-overlay.open { display: block; }
+    }
+
+    /* ============================================================
+       Responsive — Very Small Mobile (≤430px)
+    ============================================================ */
+    @media (max-width: 430px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      .payment-methods-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* زر الـ FAB (Floating Action Button) للسلة — مخفي على الديسكتوب */
+    .cart-fab {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 180;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 6px 20px rgba(99, 38, 46, 0.4);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .cart-fab:hover { transform: scale(1.07); }
+    .cart-fab-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #EF4444;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
     }
   </style>
 </head>
 <body>
 
   <!-- الحاوية الأساسية لتطبيق نقطة البيع -->
+
+  <!-- زر السلة العائم (جوال فقط) -->
+  <button class="cart-fab" id="cartFab" onclick="toggleMobileCart()" title="السلة">
+    🛒
+    <span class="cart-fab-badge" id="cartFabBadge" style="display:none">0</span>
+  </button>
+  <!-- overlay خلف السلة -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleMobileCart()"></div>
+
   <div class="app-viewport">
 
     <!-- 1. الشريط الجانبي (Sidebar) -->
@@ -1653,6 +1792,28 @@ if (!$user) {
 
     function showToast(msg) {
       alert(msg);
+    }
+
+    // ===== تبديل لوحة السلة على الجوال =====
+    function toggleMobileCart() {
+      const panel = document.querySelector('.bills-panel');
+      const overlay = document.getElementById('cartOverlay');
+      if (!panel) return;
+      const isOpen = panel.classList.toggle('cart-open');
+      if (overlay) overlay.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    // تحديث badge عداد السلة على الجوال
+    function updateCartFabBadge(count) {
+      const badge = document.getElementById('cartFabBadge');
+      if (!badge) return;
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
     }
 
     function htmlEscape(str) {

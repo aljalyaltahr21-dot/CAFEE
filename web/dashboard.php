@@ -71,6 +71,37 @@ $role = $user['role'] ?? 'customer';
     border: none;
   }
 
+  /* ============================================================
+     زر القائمة للجوال (Hamburger)
+  ============================================================ */
+  .mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 350;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary);
+    border: none;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(99,38,46,0.3);
+  }
+
+  .mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(35, 24, 21, 0.45);
+    z-index: 200;
+    backdrop-filter: blur(2px);
+  }
+  .mobile-menu-overlay.open { display: block; }
+
   /* القائمة الجانبية (Sidebar) */
   .sidebar {
     background: #FFFFFF;
@@ -751,17 +782,272 @@ $role = $user['role'] ?? 'customer';
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: #DC2626; }
   .toast.success { background: #059669; }
+
+  /* ============================================================
+     Responsive — Tablet (≤1024px)
+  ============================================================ */
+  @media (max-width: 1024px) {
+    .app-viewport {
+      grid-template-columns: 72px 1fr;
+    }
+    .nav-item {
+      width: 54px;
+      height: 54px;
+      font-size: 10px;
+    }
+    .main-content {
+      padding: 16px 18px;
+    }
+    .main-header {
+      padding: 0 18px;
+      gap: 12px;
+    }
+    .search-box {
+      width: 220px;
+    }
+    .user-details {
+      display: none;
+    }
+    .products-grid {
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    }
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+  }
+
+  /* ============================================================
+     Responsive — Mobile (≤768px)
+  ============================================================ */
+  @media (max-width: 768px) {
+    /* إخفاء body overflow للسماح بالتمرير */
+    body { overflow: auto; height: auto; min-height: 100vh; }
+
+    /* تحويل لـ flex عمودي */
+    .app-viewport {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+      overflow: visible;
+    }
+
+    /* الشريط الجانبي يتحول لقائمة منزلقة من اليمين */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 240px;
+      height: 100vh;
+      z-index: 300;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 80px 16px 24px;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+    }
+    .sidebar.mobile-open {
+      right: 0;
+    }
+
+    /* أزرار التنقل داخل القائمة المنزلقة */
+    .nav-list {
+      width: 100%;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .nav-item {
+      width: 100%;
+      height: 50px;
+      border-radius: 14px;
+      flex-direction: row;
+      justify-content: flex-start;
+      padding: 0 16px;
+      font-size: 13px;
+      gap: 12px;
+    }
+    .nav-item svg {
+      flex-shrink: 0;
+    }
+    .sidebar-bottom {
+      width: 100%;
+      align-items: flex-start;
+    }
+    .sidebar-bottom .nav-item {
+      flex-direction: row;
+      justify-content: flex-start;
+      padding: 0 16px;
+      width: 100%;
+      height: 48px;
+    }
+
+    /* زر الهمبرغر */
+    .mobile-menu-toggle {
+      display: flex;
+    }
+
+    /* المحتوى الرئيسي يأخذ كامل العرض */
+    .main-wrapper {
+      width: 100%;
+      height: auto;
+      min-height: 100vh;
+    }
+
+    /* الهيدر يتكيف مع الجوال */
+    .main-header {
+      height: auto;
+      min-height: 60px;
+      padding: 10px 14px 10px 64px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-center {
+      order: 3;
+      width: 100%;
+    }
+    .search-box {
+      width: 100%;
+    }
+    .page-title {
+      font-size: 16px;
+    }
+    .user-chip {
+      padding: 4px 10px 4px 4px;
+    }
+    .user-details {
+      display: none;
+    }
+    .user-role-label { display: none; }
+
+    /* المحتوى الرئيسي */
+    .main-content {
+      padding: 14px;
+      gap: 14px;
+    }
+
+    /* الإحصائيات — عمود واحد */
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-value { font-size: 18px; }
+
+    /* شبكة الأصناف — عمودان */
+    .products-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .product-card {
+      padding: 12px;
+    }
+    .pcard-name { font-size: 13px; }
+    .pcard-price { font-size: 14px; }
+
+    /* الجداول قابلة للتمرير أفقياً */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table { font-size: 12px; }
+    th, td { padding: 10px 10px; white-space: nowrap; }
+
+    /* شريط الفئات قابل للتمرير */
+    .category-pills {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 6px;
+    }
+
+    /* بطاقة الترخيص */
+    .license-banner {
+      padding: 16px;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .license-key-text { font-size: 15px; }
+    .license-actions { flex-direction: column; width: 100%; }
+    .license-actions .btn { width: 100%; justify-content: center; }
+
+    /* النوافذ المنبثقة */
+    .modal-box {
+      margin: 0;
+      border-radius: 20px 20px 0 0;
+      max-height: 85vh;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 100%;
+    }
+    .modal-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .modal-footer {
+      flex-direction: column-reverse;
+    }
+    .modal-footer .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* البطاقة الجانبية (section-card) */
+    .section-card {
+      padding: 14px;
+    }
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .section-header .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* الشريط الجانبي البرنامج */
+    .brand-logo {
+      font-size: 22px;
+    }
+  }
+
+  /* ============================================================
+     Responsive — Very Small Mobile (≤430px)
+  ============================================================ */
+  @media (max-width: 430px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .products-grid {
+      grid-template-columns: 1fr;
+    }
+    .main-header {
+      padding: 10px 10px 10px 60px;
+    }
+  }
 </style>
 </head>
 <body>
 
 <div id="toast" class="toast"></div>
 
+<!-- زر القائمة للجوال -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()" title="القائمة">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <line x1="3" y1="12" x2="21" y2="12"/>
+    <line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+</button>
+<!-- طبقة الإغلاق خلف القائمة -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+
 <!-- إطار التطبيق السحابي الفخم (بنمط تصميم القهوة العالمي) -->
 <div class="app-viewport">
 
   <!-- القائمة الجانبية العمودية (Sidebar) -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="appSidebar">
     <a href="dashboard.php" class="brand-logo" title="لوحة إدارة المقاهي">coffee</a>
 
     <div class="nav-list">
@@ -1576,6 +1862,34 @@ function handleGlobalSearch(q) {
     r.style.display = text.includes(query) ? '' : 'none';
   });
 }
+
+// ===== قائمة الجوال (Mobile Sidebar) =====
+function toggleMobileMenu() {
+  const sidebar = document.getElementById('appSidebar');
+  const overlay = document.getElementById('mobileMenuOverlay');
+  if (!sidebar) return;
+  const isOpen = sidebar.classList.toggle('mobile-open');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+// إغلاق القائمة عند الضغط على أي زر تنقل داخلها (جوال)
+document.addEventListener('DOMContentLoaded', function() {
+  const navTabs = document.querySelectorAll('.nav-item.nav-tab');
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('appSidebar');
+        const overlay = document.getElementById('mobileMenuOverlay');
+        if (sidebar && sidebar.classList.contains('mobile-open')) {
+          sidebar.classList.remove('mobile-open');
+          overlay.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      }
+    });
+  });
+});
 
 // ===== إشعارات Toast =====
 function showToast(msg, type = '') {
