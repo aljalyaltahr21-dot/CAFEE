@@ -1257,18 +1257,27 @@ $role = $user['role'] ?? 'customer';
   <?php endif; ?>
 
   <!-- شريط تنزيل سريع في شاشة الأصناف للكاستمير -->
+  <!-- شريط تنزيل سريع في شاشة الأصناف للكاستمير -->
   <?php if ($role === 'customer'): ?>
-  <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:var(--radius-lg);padding:12px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:22px;">💻</span>
+  <div style="background:linear-gradient(135deg, #FDF2F0 0%, #EFF6FF 100%);border:1.5px solid var(--primary-border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:26px;">☕</span>
       <div>
-        <span style="font-weight:800;color:#1E40AF;font-size:13.5px;">برنامج الكاشير المكتبي للكمبيوتر جاهز للتنزيل</span>
-        <span style="font-size:11.5px;color:var(--slate);display:block;">قم بتثبيته على جهاز نقطة البيع لربطه برخصتك ومزامنة هذه الأصناف فوراً</span>
+        <span style="font-weight:900;color:var(--primary);font-size:14.5px;">تطبيقات الكاشير ونقاط البيع جاهزة للتحميل الفوري</span>
+        <span style="font-size:12px;color:var(--slate);display:block;">اختر تطبيق الهاتف (Android APK) أو برنامج الكمبيوتر (Windows .exe) أو افتح فلاتر POS في المتصفح</span>
       </div>
     </div>
-    <a href="download.php" class="btn btn-primary" style="background:#10B981;font-size:12.5px;padding:8px 16px;text-decoration:none;">
-      <span>📦</span> تحميل البرنامج المكتبي (.zip)
-    </a>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <a href="download.php?format=apk" class="btn btn-primary" style="background:#63262E;font-size:12.5px;padding:8px 16px;text-decoration:none;box-shadow:0 4px 12px rgba(99,38,46,0.25);">
+        <span>📱</span> تحميل تطبيق الهاتف (APK)
+      </a>
+      <a href="download.php" class="btn btn-primary" style="background:#10B981;font-size:12.5px;padding:8px 16px;text-decoration:none;">
+        <span>💻</span> برنامج الكمبيوتر (.exe)
+      </a>
+      <a href="flutter/" target="_blank" class="btn btn-outline" style="font-size:12.5px;padding:8px 14px;text-decoration:none;color:#0284C7;border-color:#BAE6FD;background:#F0F9FF;">
+        <span>🌐</span> فلاتر POS ويب
+      </a>
+    </div>
   </div>
   <?php endif; ?>
 

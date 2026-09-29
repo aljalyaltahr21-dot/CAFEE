@@ -328,12 +328,22 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
 
   <div style="margin-top: 22px; padding-top: 16px; border-top: 1.5px dashed var(--border); text-align: center;">
     <div style="font-size: 12.5px; font-weight: 700; color: var(--slate); margin-bottom: 10px;">
-      💻 تثبيت برنامج الكاشير على جهاز الكمبيوتر:
+      📲 تنزيل تطبيقات الكاشير ونقاط البيع:
     </div>
-    <a href="download.php" class="btn-submit" style="text-decoration: none; background: #10B981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); font-size: 14px;">
-      <span>⬇️</span>
-      <span>تحميل برنامج الكاشير المكتبي (.exe)</span>
-    </a>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <a href="download.php?format=apk" class="btn-submit" style="text-decoration: none; background: #63262E; box-shadow: 0 4px 14px rgba(99, 38, 46, 0.35); font-size: 13.5px;">
+        <span>📱</span>
+        <span>تحميل تطبيق الهاتف (Android APK)</span>
+      </a>
+      <a href="download.php" class="btn-submit" style="text-decoration: none; background: #10B981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); font-size: 13.5px;">
+        <span>💻</span>
+        <span>تحميل برنامج الكمبيوتر (.exe)</span>
+      </a>
+      <a href="flutter/" target="_blank" class="btn-submit" style="text-decoration: none; background: #0284C7; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); font-size: 13.5px;">
+        <span>🌐</span>
+        <span>تشغيل كاشير فلاتر في المتصفح (Web POS)</span>
+      </a>
+    </div>
   </div>
 </div>
 
