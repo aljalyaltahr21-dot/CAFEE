@@ -1114,6 +1114,10 @@ $role = $user['role'] ?? 'customer';
     </div>
 
     <div class="sidebar-bottom">
+      <a href="download.php?format=apk" class="nav-item" title="تحميل نسخة سامسونج وأندرويد (APK)" style="color:#63262E;">
+        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        <span style="font-size:10px;">نسخة سامسونج</span>
+      </a>
       <a href="flutter/" class="nav-item" title="نظام الكاشير المطور (Flutter POS)" style="color:#0284C7;">
         <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
         <span>فلاتر POS</span>
@@ -1192,6 +1196,46 @@ $role = $user['role'] ?? 'customer';
       </div>
     </div>
 
+    <!-- بطاقة تطبيق سامسونج وأندرويد مع التحديثات -->
+    <div class="section-card" style="background:linear-gradient(135deg, #FDF2F0 0%, #FFFFFF 100%);border:2px solid var(--primary-border);margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#63262E,#8B3A44);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 6px 18px rgba(99,38,46,0.25);">
+            📱
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <h3 style="font-size:17px;font-weight:900;color:var(--navy);margin:0;">تطبيق الكاشير (نسخة سامسونج وأندرويد)</h3>
+              <span class="badge-pill" style="background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;font-size:11px;">v1.0.0 أحدث إصدار</span>
+              <span class="badge-pill" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;font-size:11px;">🔄 التحديثات التلقائية مفعلة</span>
+            </div>
+            <p style="font-size:12px;color:var(--slate);margin-top:4px;">
+              مبني بإطار العمل Flutter وموجّه بالكامل لهواتف وألواح سامسونج (One UI) والأندرويد | كروت متساوية 100% وفواتير سريعة
+            </p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="download.php?format=apk" class="btn btn-primary" style="padding:12px 22px;font-size:14px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
+            <span>📱</span> <b>تنزيل نسخة سامسونج (APK)</b>
+          </a>
+          <a href="flutter/" target="_blank" class="btn btn-outline" style="padding:12px 18px;font-size:13px;text-decoration:none;color:#0284C7;border-color:#BAE6FD;background:#F0F9FF;">
+            <span>🌐</span> فتح كاشير فلاتر (ويب)
+          </a>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--primary-border);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;font-size:12px;color:var(--primary);">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span>✅</span> <span><b>توافق سامسونج:</b> يدعم Galaxy S, A, Note, Z Fold والأجهزة اللوحية Tab.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span>🔄</span> <span><b>تحديثات مباشرة:</b> أي ميزة أو تعديل جديد يصله إشعار تحديث فوري داخل التطبيق.</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span>⚡</span> <span><b>مزامنة حية:</b> متصل مباشرة بقاعدة بيانات مقهاك ورخصتك السحابية.</span>
+        </div>
+      </div>
+    </div>
+
     <!-- بطاقة تنزيل وتثبيت البرنامج المكتبي -->
     <div class="section-card" style="background:linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);border:2px solid #BFDBFE;margin-bottom:24px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
@@ -1205,9 +1249,6 @@ $role = $user['role'] ?? 'customer';
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="download.php?format=apk" class="btn btn-primary" style="padding:12px 20px;font-size:13.5px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
-            <span>📱</span> <b>تطبيق الهاتف (Android APK)</b>
-          </a>
           <a href="download.php" class="btn btn-primary" style="padding:12px 20px;font-size:13.5px;gap:8px;text-decoration:none;background:#10B981;box-shadow:0 4px 14px rgba(16,185,129,0.35);">
             <span>⬇️</span> <b>برنامج الكمبيوتر (.exe)</b>
           </a>
@@ -1264,12 +1305,12 @@ $role = $user['role'] ?? 'customer';
       <span style="font-size:26px;">☕</span>
       <div>
         <span style="font-weight:900;color:var(--primary);font-size:14.5px;">تطبيقات الكاشير ونقاط البيع جاهزة للتحميل الفوري</span>
-        <span style="font-size:12px;color:var(--slate);display:block;">اختر تطبيق الهاتف (Android APK) أو برنامج الكمبيوتر (Windows .exe) أو افتح فلاتر POS في المتصفح</span>
+        <span style="font-size:12px;color:var(--slate);display:block;">اختر <b>نسخة سامسونج (APK)</b> مع التحديثات المباشرة 🔄 أو برنامج الكمبيوتر (Windows .exe) أو افتح فلاتر POS ويب</span>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <a href="download.php?format=apk" class="btn btn-primary" style="background:#63262E;font-size:12.5px;padding:8px 16px;text-decoration:none;box-shadow:0 4px 12px rgba(99,38,46,0.25);">
-        <span>📱</span> تحميل تطبيق الهاتف (APK)
+        <span>📱</span> <b>نسخة سامسونج (APK)</b>
       </a>
       <a href="download.php" class="btn btn-primary" style="background:#10B981;font-size:12.5px;padding:8px 16px;text-decoration:none;">
         <span>💻</span> برنامج الكمبيوتر (.exe)
