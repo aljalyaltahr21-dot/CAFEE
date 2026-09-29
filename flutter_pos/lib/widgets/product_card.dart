@@ -17,7 +17,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final sel = controller.getProductSelection(product.id);
 
-    // Compute dynamic price based on size
+    // Dynamic price calculation
     double extra = 0.0;
     final currentSize = sel['size'] ?? '';
     if (currentSize == 'L' || currentSize == 'كومبو 🍟' || currentSize == 'دبل' || currentSize == 'قطعتين') {
@@ -35,31 +35,31 @@ class ProductCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: AppTheme.primary.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Top: Image + Info
+          // Top: Product Photo + Info + Price
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
-                  width: 76,
-                  height: 76,
+                  width: 72,
+                  height: 72,
                   color: AppTheme.borderLight,
                   child: Image.network(
                     product.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => const Center(
-                      child: Text('☕', style: TextStyle(fontSize: 32)),
+                      child: Text('☕', style: TextStyle(fontSize: 30)),
                     ),
                   ),
                 ),
@@ -69,17 +69,39 @@ class ProductCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      product.name,
-                      style: const TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.navy,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            product.name,
+                            style: const TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.navy,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryLight,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            product.category,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       product.desc,
                       style: const TextStyle(
@@ -107,14 +129,14 @@ class ProductCard extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // Symmetrical 4-Filter Options Grid (2x2)
+          // Customization Options Grid (2x2)
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFFDFBF9),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.borderLight, width: 1.2),
+              color: const Color(0xFFFBF9F7),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppTheme.borderLight, width: 1.0),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Column(
               children: [
                 // Row 1: Mood & Size
@@ -181,7 +203,7 @@ class ProductCard extends StatelessWidget {
                     duration: const Duration(milliseconds: 1200),
                     backgroundColor: AppTheme.primary,
                     behavior: SnackBarBehavior.floating,
-                    width: 320,
+                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                 );
               },
@@ -192,20 +214,20 @@ class ProductCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const Icon(Icons.add_shopping_cart_rounded, size: 17),
+                  const SizedBox(width: 8),
                   Text(
-                    'أضف للفاتورة',
-                    style: TextStyle(
+                    'أضف للفاتورة • ${currentPrice.toStringAsFixed(2)} د.ل',
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  SizedBox(width: 6),
-                  Icon(Icons.add_shopping_cart_rounded, size: 17),
                 ],
               ),
             ),
@@ -244,7 +266,8 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    height: 26,
+                    height: 28,
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: BoxDecoration(
                       color: isSelected ? AppTheme.primary : AppTheme.cardBg,
                       borderRadius: BorderRadius.circular(8),
@@ -254,15 +277,17 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      opt,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                        color: isSelected ? Colors.white : AppTheme.slate,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        opt,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                          color: isSelected ? Colors.white : AppTheme.slate,
+                        ),
+                        maxLines: 1,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),

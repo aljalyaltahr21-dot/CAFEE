@@ -4,15 +4,176 @@ import '../theme/app_theme.dart';
 class PosSidebar extends StatelessWidget {
   final int activeIndex;
   final ValueChanged<int> onIndexChanged;
+  final bool isDrawer;
 
   const PosSidebar({
     super.key,
     required this.activeIndex,
     required this.onIndexChanged,
+    this.isDrawer = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (isDrawer) {
+      return Container(
+        color: AppTheme.cardBg,
+        child: Column(
+          children: [
+            // Drawer Luxury Header
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 32, 20, 24),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppTheme.primary, Color(0xFF42161D)],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'coffee',
+                        style: AppTheme.pacificoTitle(size: 26).copyWith(color: Colors.white),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'سامسونج 📱',
+                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'كافيه دي بوينت',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'الكاشير النشط: طاهر الجالي 🧑‍🍳',
+                    style: TextStyle(color: Color(0xFFF0D9DC), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+
+            // Navigation List
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                children: [
+                  _buildDrawerTile(
+                    context: context,
+                    index: 0,
+                    icon: Icons.dashboard_rounded,
+                    title: 'لوحة التحكم',
+                  ),
+                  _buildDrawerTile(
+                    context: context,
+                    index: 1,
+                    icon: Icons.restaurant_menu_rounded,
+                    title: 'القائمة ونقطة البيع (POS)',
+                  ),
+                  _buildDrawerTile(
+                    context: context,
+                    index: 2,
+                    icon: Icons.receipt_long_rounded,
+                    title: 'سجل الفواتير والمبيعات',
+                  ),
+                  _buildDrawerTile(
+                    context: context,
+                    index: 3,
+                    icon: Icons.inventory_2_rounded,
+                    title: 'المخزون والمنتجات',
+                  ),
+                  _buildDrawerTile(
+                    context: context,
+                    index: 4,
+                    icon: Icons.settings_rounded,
+                    title: 'إعدادات النظام',
+                  ),
+                ],
+              ),
+            ),
+
+            // Bottom Version & Logout
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.greenLight,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.green.withValues(alpha: 0.25)),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.check_circle_rounded, size: 16, color: AppTheme.green),
+                          SizedBox(width: 6),
+                          Text(
+                            'إصدار سامسونج v1.0.0 (أحدث نسخة)',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ListTile(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('تم تسجيل الخروج بنجاح'),
+                            backgroundColor: AppTheme.primary,
+                          ),
+                        );
+                      },
+                      leading: const Icon(Icons.logout_rounded, color: AppTheme.red),
+                      title: const Text(
+                        'تسجيل الخروج',
+                        style: TextStyle(
+                          color: AppTheme.red,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Desktop/Tablet Sidebar
     return Container(
       width: 86,
       decoration: const BoxDecoration(
@@ -78,7 +239,7 @@ class PosSidebar extends StatelessWidget {
                   content: Text('نسخة سامسونج محدثة بالكامل (الإصدار v1.0.0) ✓'),
                   backgroundColor: AppTheme.green,
                   behavior: SnackBarBehavior.floating,
-                  width: 320,
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 ),
               );
             },
@@ -124,6 +285,44 @@ class PosSidebar extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerTile({
+    required BuildContext context,
+    required int index,
+    required IconData icon,
+    required String title,
+  }) {
+    final isActive = activeIndex == index;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: ListTile(
+        onTap: () => onIndexChanged(index),
+        selected: isActive,
+        selectedTileColor: AppTheme.primaryLight,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: isActive ? AppTheme.primaryBorder : Colors.transparent,
+          ),
+        ),
+        leading: Icon(
+          icon,
+          color: isActive ? AppTheme.primary : AppTheme.slate,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isActive ? AppTheme.primary : AppTheme.navy,
+            fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+            fontSize: 13.5,
+          ),
+        ),
+        trailing: isActive
+            ? const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppTheme.primary)
+            : null,
       ),
     );
   }

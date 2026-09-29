@@ -39,7 +39,7 @@ class _PosScreenState extends State<PosScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => FractionallySizedBox(
-        heightFactor: 0.85,
+        heightFactor: 0.88,
         child: BillsPanel(controller: _controller, isBottomSheet: true),
       ),
     );
@@ -48,31 +48,31 @@ class _PosScreenState extends State<PosScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 900;
-    final isSmallPhone = screenWidth < 500;
+    final isMobile = screenWidth < 850;
 
-    // Mobile Phone / Small Screen Layout (Zero Overlap & Zero Collision)
+    // Mobile Phone / Tablet Portrait Layout (Zero Overlap & Zero Overflow)
     if (isMobile) {
       return Scaffold(
         backgroundColor: AppTheme.bg,
         drawer: Drawer(
-          width: 260,
-          child: SafeArea(
-            child: PosSidebar(
-              activeIndex: _activeNavIndex,
-              onIndexChanged: (idx) {
-                setState(() => _activeNavIndex = idx);
-                Navigator.of(context).pop();
-                if (idx != 1) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('القسم رقم $idx قيد المزامنة السحابية'),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                }
-              },
-            ),
+          width: 280,
+          child: PosSidebar(
+            activeIndex: _activeNavIndex,
+            isDrawer: true,
+            onIndexChanged: (idx) {
+              setState(() => _activeNavIndex = idx);
+              Navigator.of(context).pop();
+              if (idx != 1) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('القسم رقم $idx قيد المزامنة السحابية'),
+                    duration: const Duration(seconds: 1),
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                );
+              }
+            },
           ),
         ),
         appBar: AppBar(
@@ -99,15 +99,15 @@ class _PosScreenState extends State<PosScreen> {
                 ),
               ),
               Text(
-                'نقطة البيع - نسخة سامسونج',
+                'نقطة البيع - نسخة سامسونج وأندرويد',
                 style: TextStyle(fontSize: 11, color: AppTheme.slate),
               ),
             ],
           ),
           actions: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
                 color: AppTheme.primaryLight,
                 borderRadius: BorderRadius.circular(20),
@@ -116,7 +116,7 @@ class _PosScreenState extends State<PosScreen> {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('🧑‍🍳', style: TextStyle(fontSize: 15)),
+                  Text('🧑‍🍳', style: TextStyle(fontSize: 14)),
                   SizedBox(width: 4),
                   Text(
                     'طاهر',
@@ -132,8 +132,9 @@ class _PosScreenState extends State<PosScreen> {
           ],
         ),
         body: SafeArea(
+          bottom: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 8, 14, 80), // Padding to prevent overlap with FAB
+            padding: const EdgeInsets.fromLTRB(14, 8, 14, 76), // Padding prevents overlap with Floating Cart Button
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -144,7 +145,7 @@ class _PosScreenState extends State<PosScreen> {
                     controller: _searchController,
                     onChanged: (val) => _controller.setSearchQuery(val),
                     decoration: InputDecoration(
-                      hintText: 'ابحث في الأصناف والقائمة...',
+                      hintText: 'ابحث في الأصناف والمشروبات...',
                       hintStyle: const TextStyle(fontSize: 12.5, color: AppTheme.slateLight),
                       prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppTheme.slate),
                       suffixIcon: _searchController.text.isNotEmpty
@@ -175,7 +176,7 @@ class _PosScreenState extends State<PosScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
                 // Category Filter Bar (Smooth horizontal scroll)
                 CategoryBar(controller: _controller),
@@ -191,7 +192,7 @@ class _PosScreenState extends State<PosScreen> {
                           ? 'كافة الأصناف والمشروبات'
                           : 'قائمة ${_controller.selectedCategory}',
                       style: const TextStyle(
-                        fontSize: 14.5,
+                        fontSize: 14,
                         fontWeight: FontWeight.w800,
                         color: AppTheme.navy,
                       ),
@@ -199,7 +200,7 @@ class _PosScreenState extends State<PosScreen> {
                     Text(
                       '${_controller.filteredProducts.length} صنف متوفر',
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 11.5,
                         fontWeight: FontWeight.w600,
                         color: AppTheme.slate,
                       ),
@@ -209,7 +210,7 @@ class _PosScreenState extends State<PosScreen> {
 
                 const SizedBox(height: 10),
 
-                // Non-Overlapping Products Grid (1 column on small phones, 2 on tablets)
+                // Dynamic Intrinsic Products List (Eliminates RenderFlex Overflow & Overlap)
                 Expanded(
                   child: _controller.filteredProducts.isEmpty
                       ? const Center(
@@ -229,15 +230,10 @@ class _PosScreenState extends State<PosScreen> {
                             ],
                           ),
                         )
-                      : GridView.builder(
+                      : ListView.separated(
                           physics: const BouncingScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isSmallPhone ? 1 : 2,
-                            childAspectRatio: isSmallPhone ? 1.52 : 0.85,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                          ),
                           itemCount: _controller.filteredProducts.length,
+                          separatorBuilder: (context, index) => const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final product = _controller.filteredProducts[index];
                             return ProductCard(
@@ -251,45 +247,54 @@ class _PosScreenState extends State<PosScreen> {
             ),
           ),
         ),
-        // Floating Cart Bar (Bottom Sheet Trigger on Mobile)
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => _openMobileCart(context),
-          backgroundColor: AppTheme.primary,
-          foregroundColor: Colors.white,
-          elevation: 6,
-          icon: Badge(
-            label: Text(
-              '${_controller.totalItemsCount}',
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
-            isLabelVisible: _controller.cart.isNotEmpty,
-            child: const Icon(Icons.shopping_cart_rounded, size: 22),
-          ),
-          label: Row(
-            children: [
-              const Text(
-                'عرض الفاتورة',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
-              ),
-              if (_controller.cart.isNotEmpty) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${_controller.total.toStringAsFixed(2)} د.ل',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12.5,
-                      color: Colors.white,
-                    ),
-                  ),
+        // Floating Cart Bar (Centered Bottom Trigger for Cashier Thumb Reach)
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: FloatingActionButton.extended(
+              onPressed: () => _openMobileCart(context),
+              backgroundColor: AppTheme.primary,
+              foregroundColor: Colors.white,
+              elevation: 6,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              icon: Badge(
+                label: Text(
+                  '${_controller.totalItemsCount}',
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
-              ],
-            ],
+                isLabelVisible: _controller.cart.isNotEmpty,
+                child: const Icon(Icons.shopping_cart_rounded, size: 22),
+              ),
+              label: Row(
+                children: [
+                  const Text(
+                    'عرض الفاتورة والطلب',
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                  ),
+                  if (_controller.cart.isNotEmpty) ...[
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${_controller.total.toStringAsFixed(2)} د.ل',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       );
@@ -310,6 +315,8 @@ class _PosScreenState extends State<PosScreen> {
                   SnackBar(
                     content: Text('القسم رقم $idx قيد المزامنة السحابية'),
                     duration: const Duration(seconds: 1),
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                 );
               }
@@ -437,7 +444,7 @@ class _PosScreenState extends State<PosScreen> {
                               maxCrossAxisExtent: 290,
                               mainAxisSpacing: 16,
                               crossAxisSpacing: 16,
-                              childAspectRatio: 0.72,
+                              childAspectRatio: 0.70,
                             ),
                             itemCount: _controller.filteredProducts.length,
                             itemBuilder: (context, index) {

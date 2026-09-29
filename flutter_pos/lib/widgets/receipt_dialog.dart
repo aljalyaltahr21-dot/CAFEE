@@ -20,9 +20,9 @@ class ReceiptDialog extends StatelessWidget {
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(20),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Container(
-        width: 380,
+        constraints: const BoxConstraints(maxWidth: 380),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -34,156 +34,160 @@ class ReceiptDialog extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Coffee Icon & Brand
-            const Text('☕', style: TextStyle(fontSize: 34)),
-            const SizedBox(height: 6),
-            const Text(
-              'كافيه دي بوينت',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                color: AppTheme.primary,
-              ),
-            ),
-            const Text(
-              'فاتورة مبيعات ضريبية مبسطة',
-              style: TextStyle(fontSize: 11, color: AppTheme.slate),
-            ),
-            const SizedBox(height: 14),
-
-            // Receipt Box
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFFDF9),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppTheme.border,
-                  style: BorderStyle.solid,
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Coffee Icon & Brand
+              const Text('☕', style: TextStyle(fontSize: 32)),
+              const SizedBox(height: 6),
+              const Text(
+                'كافيه دي بوينت',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.primary,
                 ),
               ),
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                children: [
-                  _buildMetaRow('رقم الطلب', orderNumber),
-                  _buildMetaRow('التاريخ', dateStr),
-                  _buildMetaRow('الكاشير', 'طاهر الجالي 🧑‍🍳'),
-                  _buildMetaRow(
-                    'طريقة الدفع',
-                    controller.paymentMethod == 'card'
-                        ? 'بطاقة مصرفية 💳'
-                        : (controller.paymentMethod == 'cash'
-                            ? 'نقدي 💵'
-                            : 'محفظة سداد 📱'),
-                  ),
-                  const Divider(color: AppTheme.border, height: 16),
+              const Text(
+                'فاتورة مبيعات ضريبية مبسطة',
+                style: TextStyle(fontSize: 11, color: AppTheme.slate),
+              ),
+              const SizedBox(height: 12),
 
-                  // Items List
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 180),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: controller.cart.length,
-                      itemBuilder: (context, idx) {
-                        final item = controller.cart[idx];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '${item.product.name} (x${item.quantity})',
+              // Receipt Box
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFDF9),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.border,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    _buildMetaRow('رقم الطلب', orderNumber),
+                    _buildMetaRow('التاريخ', dateStr),
+                    _buildMetaRow('الكاشير', 'طاهر الجالي 🧑‍🍳'),
+                    _buildMetaRow(
+                      'طريقة الدفع',
+                      controller.paymentMethod == 'card'
+                          ? 'بطاقة مصرفية 💳'
+                          : (controller.paymentMethod == 'cash'
+                              ? 'نقدي 💵'
+                              : 'محفظة سداد 📱'),
+                    ),
+                    const Divider(color: AppTheme.border, height: 16),
+
+                    // Items List
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 180),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: controller.cart.length,
+                        itemBuilder: (context, idx) {
+                          final item = controller.cart[idx];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${item.product.name} (x${item.quantity})',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  '${item.totalPrice.toStringAsFixed(2)} د.ل',
                                   style: const TextStyle(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w800,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              Text(
-                                '${item.totalPrice.toStringAsFixed(2)} د.ل',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    const Divider(color: AppTheme.border, height: 16),
+                    _buildAmountRow('المجموع الفرعي', '${controller.subtotal.toStringAsFixed(2)} د.ل'),
+                    _buildAmountRow('الضريبة (10%)', '${controller.tax.toStringAsFixed(2)} د.ل'),
+                    const SizedBox(height: 4),
+                    _buildAmountRow(
+                      'المجموع الكلي',
+                      '${controller.total.toStringAsFixed(2)} د.ل',
+                      isTotal: true,
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Print and Close Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        controller.clearCart();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('تمت معالجة وطباعة الفاتورة بنجاح ✓'),
+                            backgroundColor: AppTheme.green,
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           ),
                         );
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.print_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text(
+                            'طباعة الآن',
+                            style: TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-
-                  const Divider(color: AppTheme.border, height: 16),
-                  _buildAmountRow('المجموع الفرعي', '${controller.subtotal.toStringAsFixed(2)} د.ل'),
-                  _buildAmountRow('الضريبة (10%)', '${controller.tax.toStringAsFixed(2)} د.ل'),
-                  const SizedBox(height: 4),
-                  _buildAmountRow(
-                    'المجموع الكلي',
-                    '${controller.total.toStringAsFixed(2)} د.ل',
-                    isTotal: true,
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 18),
-
-            // Print and Close Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.clearCart();
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('تمت معالجة وطباعة الفاتورة بنجاح ✓'),
-                          backgroundColor: AppTheme.green,
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
+                  const SizedBox(width: 10),
+                  OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.print_rounded, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                          'طباعة الآن',
-                          style: TextStyle(fontWeight: FontWeight.w800),
-                        ),
-                      ],
-                    ),
+                    child: const Text('إغلاق'),
                   ),
-                ),
-                const SizedBox(width: 10),
-                OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                  ),
-                  child: const Text('إغلاق'),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
