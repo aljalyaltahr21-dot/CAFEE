@@ -5,23 +5,46 @@ import 'receipt_dialog.dart';
 
 class BillsPanel extends StatelessWidget {
   final PosController controller;
+  final bool isBottomSheet;
 
-  const BillsPanel({super.key, required this.controller});
+  const BillsPanel({
+    super.key,
+    required this.controller,
+    this.isBottomSheet = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 420,
-      decoration: const BoxDecoration(
+      width: isBottomSheet ? double.infinity : 400,
+      decoration: BoxDecoration(
         color: AppTheme.cardBg,
-        border: Border(
-          right: BorderSide(color: AppTheme.borderLight, width: 1.5),
-        ),
+        border: isBottomSheet
+            ? null
+            : const Border(
+                right: BorderSide(color: AppTheme.borderLight, width: 1.5),
+              ),
+        borderRadius: isBottomSheet
+            ? const BorderRadius.vertical(top: Radius.circular(24))
+            : null,
       ),
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, isBottomSheet ? 12 : 20, 20, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (isBottomSheet) ...[
+            Center(
+              child: Container(
+                width: 44,
+                height: 4.5,
+                margin: const EdgeInsets.only(bottom: 14),
+                decoration: BoxDecoration(
+                  color: AppTheme.border,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ],
           // Cashier Bar
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
