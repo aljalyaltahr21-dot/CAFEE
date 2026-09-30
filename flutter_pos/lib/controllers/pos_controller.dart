@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import '../services/license_service.dart';
 
 class PosController extends ChangeNotifier {
   final List<Product> _catalog = [
@@ -250,7 +251,47 @@ class PosController extends ChangeNotifier {
   String _paymentMethod = 'card';
 
   PosController() {
+    _loadProductsFromLicense();
     _initSelections();
+  }
+
+  void _loadProductsFromLicense() {
+    if (LicenseService.branchProducts.isNotEmpty) {
+      final List<Product> loaded = [];
+      for (final raw in LicenseService.branchProducts) {
+        if (raw is Map) {
+          final id = (raw['id'] is int) ? raw['id'] as int : int.tryParse(raw['id'].toString()) ?? (loaded.length + 1);
+          final name = raw['name']?.toString() ?? 'صنف';
+          final nameEn = raw['nameEn']?.toString() ?? '';
+          final desc = raw['desc']?.toString() ?? 'صنف طازج ومعد بعناية';
+          final price = (raw['price'] is num) ? (raw['price'] as num).toDouble() : double.tryParse(raw['price'].toString()) ?? 10.0;
+          final cat = raw['category']?.toString() ?? 'قهوة';
+          final img = raw['imageUrl']?.toString() ?? 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400';
+
+          loaded.add(Product(
+            id: id,
+            name: name,
+            nameEn: nameEn,
+            desc: desc,
+            price: price,
+            category: cat,
+            imageUrl: img,
+            moodLabel: 'الحالة',
+            moods: const ['🔥 ساخن', '❄️ بارد'],
+            sizeLabel: 'الحجم',
+            sizes: const ['S', 'M', 'L'],
+            sugarLabel: 'السكر',
+            sugarLevels: const ['30%', '50%', '70%'],
+            extraLabel: 'الإضافة',
+            extras: const ['خفيف', 'وسط', 'إكسترا'],
+          ));
+        }
+      }
+      if (loaded.isNotEmpty) {
+        _catalog.clear();
+        _catalog.addAll(loaded);
+      }
+    }
   }
 
   void _initSelections() {

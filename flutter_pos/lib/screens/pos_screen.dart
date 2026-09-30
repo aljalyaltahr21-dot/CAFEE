@@ -6,6 +6,7 @@ import '../widgets/category_bar.dart';
 import '../widgets/product_card.dart';
 import '../widgets/bills_panel.dart';
 import '../services/update_service.dart';
+import '../services/license_service.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({super.key});
@@ -93,20 +94,24 @@ class _PosScreenState extends State<PosScreen> {
               tooltip: 'القائمة الرئيسية',
             ),
           ),
-          title: const Column(
+          title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'كافيه دي بوينت ☕',
-                style: TextStyle(
+                '${LicenseService.cafeName ?? "كافيه دي بوينت"} ☕',
+                style: const TextStyle(
                   fontSize: 16.5,
                   fontWeight: FontWeight.w900,
                   color: AppTheme.navy,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               Text(
-                'نقطة البيع - نسخة سامسونج وأندرويد',
-                style: TextStyle(fontSize: 11, color: AppTheme.slate),
+                LicenseService.activeLicenseKey != null
+                    ? 'رخصة نشطة: ${LicenseService.activeLicenseKey}'
+                    : 'نقطة البيع - نسخة سامسونج',
+                style: const TextStyle(fontSize: 11, color: AppTheme.slate),
               ),
             ],
           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/update_service.dart';
+import '../services/license_service.dart';
+import '../screens/license_screen.dart';
 
 class PosSidebar extends StatelessWidget {
   final int activeIndex;
@@ -56,18 +58,20 @@ class PosSidebar extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'كافيه دي بوينت',
-                    style: TextStyle(
+                  Text(
+                    LicenseService.cafeName ?? 'كافيه دي بوينت',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
-                  const Text(
-                    'الكاشير النشط: طاهر الجالي 🧑‍🍳',
-                    style: TextStyle(color: Color(0xFFF0D9DC), fontSize: 12),
+                  Text(
+                    'العميل: ${LicenseService.customerName ?? "طاهر الجالي"} 🧑‍🍳',
+                    style: const TextStyle(color: Color(0xFFF0D9DC), fontSize: 12),
                   ),
                 ],
               ),
@@ -147,6 +151,49 @@ class PosSidebar extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    ListTile(
+                      onTap: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('فك ربط الترخيص'),
+                            content: const Text('هل تريد إلغاء تنشيط الترخيص الحالي والعودة لشاشة التنشيط؟'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(false),
+                                child: const Text('إلغاء'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.of(ctx).pop(true),
+                                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.red),
+                                child: const Text('تأكيد', style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true && context.mounted) {
+                          await LicenseService.removeLicense();
+                          if (!context.mounted) return;
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const LicenseScreen()),
+                            (route) => false,
+                          );
+                        }
+                      },
+                      leading: const Icon(Icons.key_off_rounded, color: AppTheme.slate),
+                      title: Text(
+                        'الرخصة: ${LicenseService.activeLicenseKey ?? "نشطة"}',
+                        style: const TextStyle(
+                          color: AppTheme.slate,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                        ),
+                      ),
+                      subtitle: const Text('اضغط لتغيير الرخصة', style: TextStyle(fontSize: 10, color: AppTheme.slateLight)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                     ListTile(
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(

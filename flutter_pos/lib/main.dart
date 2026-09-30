@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'theme/app_theme.dart';
-import 'screens/pos_screen.dart';
+import 'screens/license_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ class CafePosApp extends StatelessWidget {
       ],
       home: const Directionality(
         textDirection: TextDirection.rtl,
-        child: PosScreen(),
+        child: LicenseScreen(),
       ),
     );
   }
