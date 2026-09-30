@@ -331,9 +331,9 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
       📲 تنزيل تطبيقات الكاشير ونقاط البيع:
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <a href="download.php?format=apk" class="btn-submit" style="text-decoration: none; background: #63262E; box-shadow: 0 4px 14px rgba(99, 38, 46, 0.35); font-size: 13.5px;">
+      <a href="https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk" class="btn-submit" style="text-decoration: none; background: #63262E; box-shadow: 0 4px 14px rgba(99, 38, 46, 0.35); font-size: 13.5px;">
         <span>📱</span>
-        <span>تحميل تطبيق الهاتف (Android APK)</span>
+        <span>تحميل تطبيق الهاتف وسامسونج (Android APK)</span>
       </a>
       <a href="download.php" class="btn-submit" style="text-decoration: none; background: #10B981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); font-size: 13.5px;">
         <span>💻</span>

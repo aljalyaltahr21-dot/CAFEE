@@ -24,16 +24,9 @@ $filename = '';
 $contentType = 'application/octet-stream';
 
 if ($format === 'apk') {
-    $apkFile = $downloadsDir . '/app-release.apk';
-    if (file_exists($apkFile)) {
-        $targetFile = $apkFile;
-        $filename = 'CafePOS-Flutter-Android.apk';
-        $contentType = 'application/vnd.android.package-archive';
-    } else {
-        // إعادة التوجيه للتحميل المباشر من GitHub Releases
-        header("Location: https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk");
-        exit;
-    }
+    // التحميل المباشر عالي السرعة لنسخة الهاتف وسامسونج من سحابة GitHub Releases لتفادي حظر وقيود الاستضافة
+    header("Location: https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk");
+    exit;
 } elseif ($format === 'zip') {
     if ($latestZip && file_exists($latestZip)) {
         $targetFile = $latestZip;

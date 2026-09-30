@@ -1114,9 +1114,9 @@ $role = $user['role'] ?? 'customer';
     </div>
 
     <div class="sidebar-bottom">
-      <a href="download.php?format=apk" class="nav-item" title="تحميل نسخة سامسونج وأندرويد (APK)" style="color:#63262E;">
+      <a href="https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk" class="nav-item" title="تحميل تطبيق الهاتف وسامسونج (APK)" style="color:#63262E;">
         <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-        <span style="font-size:10px;">نسخة سامسونج</span>
+        <span style="font-size:10px;">تطبيق الهاتف</span>
       </a>
       <a href="flutter/" class="nav-item" title="نظام الكاشير المطور (Flutter POS)" style="color:#0284C7;">
         <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
@@ -1216,8 +1216,8 @@ $role = $user['role'] ?? 'customer';
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="download.php?format=apk" class="btn btn-primary" style="padding:12px 22px;font-size:14px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
-            <span>📱</span> <b>تحميل تحديث سامسونج (APK)</b>
+          <a href="https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk" class="btn btn-primary" style="padding:12px 22px;font-size:14px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
+            <span>📱</span> <b>تحميل تطبيق الهاتف وسامسونج (APK)</b>
           </a>
           <button onclick="checkMobileUpdateLive()" class="btn btn-outline" style="padding:12px 16px;font-size:13px;color:#059669;border-color:#A7F3D0;background:#ECFDF5;cursor:pointer;">
             <span>🔄</span> فحص التحديثات الآن
@@ -1313,8 +1313,8 @@ $role = $user['role'] ?? 'customer';
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <a href="download.php?format=apk" class="btn btn-primary" style="background:#63262E;font-size:12.5px;padding:8px 16px;text-decoration:none;box-shadow:0 4px 12px rgba(99,38,46,0.25);">
-        <span>📱</span> <b>نسخة سامسونج (APK)</b>
+      <a href="https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk" class="btn btn-primary" style="background:#63262E;font-size:12.5px;padding:8px 16px;text-decoration:none;box-shadow:0 4px 12px rgba(99,38,46,0.25);">
+        <span>📱</span> <b>تطبيق الهاتف (APK)</b>
       </a>
       <a href="download.php" class="btn btn-primary" style="background:#10B981;font-size:12.5px;padding:8px 16px;text-decoration:none;">
         <span>💻</span> برنامج الكمبيوتر (.exe)
