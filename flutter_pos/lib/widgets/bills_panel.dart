@@ -398,19 +398,22 @@ class BillsPanel extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.print_rounded, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'طباعة وتأكيد الفاتورة',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                child: const FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.print_rounded, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'طباعة وتأكيد الفاتورة',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -478,12 +481,16 @@ class BillsPanel extends StatelessWidget {
             ),
           ),
           alignment: Alignment.center,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
-              color: isActive ? AppTheme.primary : AppTheme.slate,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                color: isActive ? AppTheme.primary : AppTheme.slate,
+              ),
             ),
           ),
         ),

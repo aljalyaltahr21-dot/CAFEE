@@ -216,19 +216,22 @@ class ProductCard extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.add_shopping_cart_rounded, size: 17),
-                  const SizedBox(width: 8),
-                  Text(
-                    'أضف للفاتورة • ${currentPrice.toStringAsFixed(2)} د.ل',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.add_shopping_cart_rounded, size: 17),
+                    const SizedBox(width: 8),
+                    Text(
+                      'أضف للفاتورة • ${currentPrice.toStringAsFixed(2)} د.ل',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

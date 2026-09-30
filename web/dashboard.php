@@ -820,34 +820,54 @@ $role = $user['role'] ?? 'customer';
      Responsive — Mobile (≤768px)
   ============================================================ */
   @media (max-width: 768px) {
-    /* إخفاء body overflow للسماح بالتمرير */
-    body { overflow: auto; height: auto; min-height: 100vh; }
+    /* إلغاء حظر التمرير على الجوال */
+    html, body {
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh;
+      max-width: 100vw;
+    }
 
-    /* تحويل لـ flex عمودي */
+    /* تحويل الإطار العام إلى تدفق عمودي حر */
     .app-viewport {
       display: flex;
       flex-direction: column;
       height: auto;
       min-height: 100vh;
       overflow: visible;
+      width: 100%;
+      max-width: 100%;
     }
 
-    /* الشريط الجانبي يتحول لقائمة منزلقة من اليمين */
+    /* الشريط الجانبي يتحول لقائمة منزلقة فاخرة من اليمين */
     .sidebar {
       position: fixed;
       top: 0;
       right: -100%;
-      width: 240px;
+      width: 260px;
       height: 100vh;
-      z-index: 300;
+      z-index: 999;
       flex-direction: column;
       align-items: flex-start;
-      padding: 80px 16px 24px;
+      padding: 70px 16px 24px;
       transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+      box-shadow: -10px 0 35px rgba(0,0,0,0.25);
     }
     .sidebar.mobile-open {
       right: 0;
+    }
+
+    /* زر الهمبرغر مثبت بأعلى اليمين */
+    .mobile-menu-toggle {
+      display: flex;
+      position: fixed;
+      top: 10px;
+      right: 12px;
+      z-index: 1000;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
     }
 
     /* أزرار التنقل داخل القائمة المنزلقة */
@@ -858,11 +878,11 @@ $role = $user['role'] ?? 'customer';
     }
     .nav-item {
       width: 100%;
-      height: 50px;
-      border-radius: 14px;
+      height: 48px;
+      border-radius: 12px;
       flex-direction: row;
       justify-content: flex-start;
-      padding: 0 16px;
+      padding: 0 14px;
       font-size: 13px;
       gap: 12px;
     }
@@ -876,109 +896,199 @@ $role = $user['role'] ?? 'customer';
     .sidebar-bottom .nav-item {
       flex-direction: row;
       justify-content: flex-start;
-      padding: 0 16px;
+      padding: 0 14px;
       width: 100%;
       height: 48px;
-    }
-
-    /* زر الهمبرغر */
-    .mobile-menu-toggle {
-      display: flex;
     }
 
     /* المحتوى الرئيسي يأخذ كامل العرض */
     .main-wrapper {
       width: 100%;
+      max-width: 100%;
       height: auto;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* الهيدر يتكيف مع الجوال */
+    /* الهيدر يتكيف مع الجوال: حماية كاملة من تداخل زر القائمة في نظام RTL */
     .main-header {
       height: auto;
-      min-height: 60px;
-      padding: 10px 14px 10px 64px;
+      min-height: 62px;
+      padding: 10px 68px 10px 14px !important; /* مساحة كافية 68px لزر القائمة على اليمين تمنع التداخل نهائياً */
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
+    }
+    .header-left {
+      min-width: 0;
+      flex: 1;
+    }
+    .page-title {
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      margin: 0;
     }
     .header-center {
       order: 3;
       width: 100%;
+      margin-top: 4px;
     }
     .search-box {
       width: 100%;
     }
-    .page-title {
-      font-size: 16px;
-    }
     .user-chip {
-      padding: 4px 10px 4px 4px;
+      padding: 3px 8px 3px 3px;
     }
     .user-details {
       display: none;
     }
     .user-role-label { display: none; }
 
-    /* المحتوى الرئيسي */
+    /* الحاوية الرئيسية للمحتوى */
     .main-content {
-      padding: 14px;
-      gap: 14px;
+      padding: 12px;
+      gap: 12px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
-    /* الإحصائيات — عمود واحد */
+    /* شبكة الإحصائيات — عمودان متوازيان لمنع التداخل */
     .stats-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      padding: 12px 14px;
+      min-width: 0;
       gap: 10px;
     }
-    .stat-value { font-size: 18px; }
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .stat-value {
+      font-size: 16px;
+      word-break: break-word;
+    }
+    .stat-label {
+      font-size: 11px;
+    }
 
-    /* شبكة الأصناف — عمودان */
+    /* شبكة الأصناف — عمود فردي أنيق على الهواتف لمنع ضيق البطاقات */
     .products-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
     .product-card {
-      padding: 12px;
+      padding: 14px;
+      border-radius: 14px;
     }
-    .pcard-name { font-size: 13px; }
-    .pcard-price { font-size: 14px; }
+    .pcard-header {
+      gap: 8px;
+    }
+    .pcard-name {
+      font-size: 14px;
+      word-break: break-word;
+      line-height: 1.3;
+    }
+    .pcard-cat {
+      font-size: 11px;
+    }
+    .pcard-price {
+      font-size: 15px;
+    }
 
-    /* الجداول قابلة للتمرير أفقياً */
+    /* الجداول قابلة للتمرير أفقياً بدون تشويه الواجهة */
     .table-responsive {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      margin: 0 -4px;
+      padding: 0 4px;
     }
     table { font-size: 12px; }
-    th, td { padding: 10px 10px; white-space: nowrap; }
+    th, td { padding: 9px 10px; white-space: nowrap; }
 
-    /* شريط الفئات قابل للتمرير */
+    /* شريط الفئات قابل للتمرير الأفقي السلس */
     .category-pills {
       flex-wrap: nowrap;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       padding-bottom: 6px;
     }
+    .category-pill {
+      font-size: 12px;
+      padding: 6px 14px;
+    }
 
     /* بطاقة الترخيص */
     .license-banner {
       padding: 16px;
       flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+    .license-banner-left {
+      flex-direction: row;
+      align-items: center;
       gap: 12px;
     }
-    .license-key-text { font-size: 15px; }
-    .license-actions { flex-direction: column; width: 100%; }
-    .license-actions .btn { width: 100%; justify-content: center; }
+    .license-icon-box {
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .license-key-text {
+      font-size: 14px;
+      word-break: break-all;
+    }
+    .license-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .license-actions .btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+      padding: 11px 14px;
+      font-size: 13px;
+    }
 
-    /* النوافذ المنبثقة */
+    /* بطاقات الأقسام والتنزيلات */
+    .section-card {
+      padding: 14px;
+      border-radius: 14px;
+    }
+    .section-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .section-header .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* النوافذ المنبثقة من الأسفل */
     .modal-box {
       margin: 0;
-      border-radius: 20px 20px 0 0;
+      border-radius: 22px 22px 0 0;
       max-height: 85vh;
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       max-width: 100%;
+      padding: 20px 16px;
+      overflow-y: auto;
     }
     .modal-overlay {
       align-items: flex-end;
@@ -986,29 +1096,25 @@ $role = $user['role'] ?? 'customer';
     }
     .modal-footer {
       flex-direction: column-reverse;
+      gap: 8px;
     }
     .modal-footer .btn {
       width: 100%;
       justify-content: center;
     }
 
-    /* البطاقة الجانبية (section-card) */
-    .section-card {
-      padding: 14px;
-    }
-    .section-header {
+    /* بطاقات التحميل: تنظيم أزرار APK و EXE كاملة العرض */
+    .download-actions-grid {
+      display: flex;
       flex-direction: column;
-      align-items: flex-start;
       gap: 8px;
+      width: 100%;
     }
-    .section-header .btn {
+    .download-actions-grid .btn {
       width: 100%;
       justify-content: center;
-    }
-
-    /* الشريط الجانبي البرنامج */
-    .brand-logo {
-      font-size: 22px;
+      box-sizing: border-box;
+      padding: 12px 14px;
     }
   }
 
@@ -1019,11 +1125,11 @@ $role = $user['role'] ?? 'customer';
     .stats-grid {
       grid-template-columns: 1fr;
     }
-    .products-grid {
-      grid-template-columns: 1fr;
-    }
     .main-header {
-      padding: 10px 10px 10px 60px;
+      padding: 10px 64px 10px 10px !important;
+    }
+    .page-title {
+      font-size: 14px;
     }
   }
 </style>
@@ -1188,6 +1294,7 @@ $role = $user['role'] ?? 'customer';
           <div id="custLicStatusBadge" class="license-status-chip status-active">فحص الصلاحية...</div>
         </div>
       </div>
+      <div class="license-actions">
         <a href="download.php" class="btn btn-white" style="background:#10B981;color:#fff;box-shadow:0 4px 14px rgba(16,185,129,0.35);font-size:13.5px;text-decoration:none;">
           <span>💻</span> تنزيل البرنامج المكتبي (.exe)
         </a>
@@ -1215,7 +1322,7 @@ $role = $user['role'] ?? 'customer';
             </p>
           </div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div class="download-actions-grid" style="display:flex;gap:8px;flex-wrap:wrap;">
           <a href="https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk" class="btn btn-primary" style="padding:12px 22px;font-size:14px;gap:8px;text-decoration:none;background:#63262E;box-shadow:0 4px 14px rgba(99,38,46,0.35);">
             <span>📱</span> <b>تحميل تطبيق الهاتف وسامسونج (APK)</b>
           </a>
