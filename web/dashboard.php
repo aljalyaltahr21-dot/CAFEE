@@ -20,36 +20,44 @@ $role = $user['role'] ?? 'customer';
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
   
   :root {
-    --primary: #63262E;          /* لون البرغندي والقهوة الفاخر */
-    --primary-dark: #4E1D24;
-    --primary-light: #FDF2F0;
-    --primary-border: #E8D4D2;
-    --navy: #231815;             /* لون حبوب القهوة الداكنة */
-    --navy-surface: #382522;
-    --slate: #7E706D;
-    --slate-light: #A89B98;
+    --primary: #7B2D35;
+    --primary-dark: #5C1F26;
+    --primary-light: #FFF0F0;
+    --primary-border: #F0D0D2;
+    --primary-glow: rgba(123, 45, 53, 0.18);
+    --navy: #1A1210;
+    --navy-surface: #2D1F1C;
+    --slate: #6B5E5B;
+    --slate-light: #9C8E8B;
     --border: #EDE5E2;
-    --border-light: #F4EFEB;
-    --bg: #F8F5F2;               /* لون الخلفية الكريمة الدافئة */
+    --border-light: #F5EFEC;
+    --bg: #F7F3F0;
     --white: #FFFFFF;
-    --green: #10B981;
-    --green-light: #ECFDF5;
-    --green-dark: #065F46;
-    --red: #EF4444;
+    --green: #059669;
+    --green-light: #D1FAE5;
+    --green-dark: #064E3B;
+    --red: #DC2626;
     --red-light: #FEE2E2;
-    --gold: #D97706;
+    --gold: #B45309;
     --gold-light: #FEF3C7;
+    --blue: #1D4ED8;
+    --blue-light: #EFF6FF;
+    --purple: #7C3AED;
+    --purple-light: #EDE9FE;
     --radius-sm: 10px;
     --radius-md: 14px;
     --radius-lg: 18px;
     --radius-xl: 24px;
-    --shadow-sm: 0 2px 8px rgba(99, 38, 46, 0.04);
-    --shadow-md: 0 8px 24px rgba(99, 38, 46, 0.08);
-    --shadow-lg: 0 20px 50px rgba(99, 38, 46, 0.12);
+    --shadow-xs: 0 1px 4px rgba(0,0,0,0.06);
+    --shadow-sm: 0 3px 12px rgba(0,0,0,0.07);
+    --shadow-md: 0 8px 28px rgba(0,0,0,0.10);
+    --shadow-lg: 0 20px 56px rgba(0,0,0,0.14);
+    --sidebar-bg: #1E1210;
+    --sidebar-active: #7B2D35;
   }
 
   body {
-    background: #FAF8F6;
+    background: var(--bg);
     margin: 0;
     padding: 0;
     width: 100vw;
@@ -58,17 +66,13 @@ $role = $user['role'] ?? 'customer';
     color: var(--navy);
   }
 
-  /* إطار التطبيق السحابي بكامل كِبر الشاشة بدون أي فراغات جانبية */
   .app-viewport {
     width: 100vw;
     height: 100vh;
-    background: #FAF8F6;
-    border-radius: 0;
-    box-shadow: none;
+    background: var(--bg);
     display: grid;
-    grid-template-columns: 88px 1fr;
+    grid-template-columns: 90px 1fr;
     overflow: hidden;
-    border: none;
   }
 
   /* ============================================================
@@ -104,51 +108,55 @@ $role = $user['role'] ?? 'customer';
 
   /* القائمة الجانبية (Sidebar) */
   .sidebar {
-    background: #FFFFFF;
-    border-left: 1.5px solid var(--border-light);
+    background: var(--sidebar-bg);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 8px;
+    padding: 20px 10px;
     z-index: 10;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.22);
   }
 
   .brand-logo {
     font-family: 'Pacifico', cursive;
-    color: var(--primary);
-    font-size: 26px;
+    color: #FFFFFF;
+    font-size: 22px;
     margin-bottom: 28px;
     text-decoration: none;
-    letter-spacing: -0.5px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: var(--primary);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(123,45,53,0.5);
   }
 
   .nav-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
     width: 100%;
     align-items: center;
     flex: 1;
   }
 
   .nav-item {
-    width: 64px;
-    height: 64px;
+    width: 62px;
+    height: 62px;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    color: var(--slate);
+    color: rgba(255,255,255,0.45);
     text-decoration: none;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     border: none;
     background: transparent;
@@ -165,15 +173,15 @@ $role = $user['role'] ?? 'customer';
   }
 
   .nav-item:hover {
-    color: var(--primary);
-    background: var(--primary-light);
+    color: #FFFFFF;
+    background: rgba(255,255,255,0.10);
     transform: translateY(-2px);
   }
 
   .nav-item.active {
     background: var(--primary);
     color: #FFFFFF;
-    box-shadow: 0 8px 18px rgba(99, 38, 46, 0.3);
+    box-shadow: 0 6px 20px rgba(123,45,53,0.55);
   }
 
   .nav-item.active svg {
@@ -182,15 +190,16 @@ $role = $user['role'] ?? 'customer';
 
   .tab-badge {
     position: absolute;
-    top: 6px;
-    right: 8px;
-    padding: 2px 6px;
+    top: 7px;
+    right: 7px;
+    padding: 2px 5px;
     border-radius: 999px;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 900;
-    background: var(--red);
+    background: #EF4444;
     color: #fff;
-    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45);
+    border: 1.5px solid var(--sidebar-bg);
   }
 
   .sidebar-bottom {
@@ -200,7 +209,7 @@ $role = $user['role'] ?? 'customer';
     align-items: center;
     gap: 10px;
     padding-top: 12px;
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid rgba(255,255,255,0.10);
   }
 
   /* منطقة المحتوى والترويسة (Main Workspace) */
@@ -209,36 +218,40 @@ $role = $user['role'] ?? 'customer';
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    background: #FAF8F6;
+    background: var(--bg);
   }
 
   .main-header {
     background: #FFFFFF;
-    border-bottom: 1.5px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
     padding: 0 28px;
-    height: 70px;
+    height: 68px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
     flex-shrink: 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
   }
 
   .page-title {
     font-size: 20px;
     font-weight: 900;
     color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .search-box {
     position: relative;
-    width: 320px;
+    width: 300px;
   }
 
   .search-input {
     width: 100%;
-    height: 44px;
-    background: #F9F7F5;
+    height: 42px;
+    background: var(--bg);
     border: 1.5px solid var(--border);
     border-radius: 999px;
     padding: 0 46px 0 18px;
@@ -251,12 +264,12 @@ $role = $user['role'] ?? 'customer';
   .search-input:focus {
     border-color: var(--primary);
     background: #FFFFFF;
-    box-shadow: 0 0 0 3px rgba(99, 38, 46, 0.12);
+    box-shadow: 0 0 0 3px var(--primary-glow);
   }
 
   .search-icon {
     position: absolute;
-    right: 16px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     width: 18px;
@@ -277,18 +290,30 @@ $role = $user['role'] ?? 'customer';
     align-items: center;
     gap: 10px;
     padding: 5px 14px 5px 6px;
-    background: #FDFBF9;
-    border: 1.5px solid var(--border);
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary-border);
     border-radius: 999px;
+    transition: all 0.2s;
+  }
+
+  .user-chip:hover {
+    background: #FFE8E8;
+    border-color: var(--primary);
   }
 
   .user-avatar {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     overflow: hidden;
-    background: var(--primary-light);
-    border: 1.5px solid var(--primary-border);
+    background: var(--primary);
+    border: 2px solid var(--primary-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 900;
   }
 
   .user-avatar img {
@@ -304,9 +329,11 @@ $role = $user['role'] ?? 'customer';
   }
 
   .user-role-label {
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .user-name-text {
@@ -333,6 +360,7 @@ $role = $user['role'] ?? 'customer';
   .bell-btn:hover {
     border-color: var(--primary);
     color: var(--primary);
+    background: var(--primary-light);
   }
 
   .bell-btn .dot {
@@ -341,8 +369,8 @@ $role = $user['role'] ?? 'customer';
     border-radius: 50%;
     background: var(--red);
     position: absolute;
-    top: 9px;
-    right: 9px;
+    top: 8px;
+    right: 8px;
     border: 1.5px solid #FFFFFF;
   }
 
@@ -350,7 +378,7 @@ $role = $user['role'] ?? 'customer';
   .main-content {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 28px;
+    padding: 22px 26px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -359,14 +387,14 @@ $role = $user['role'] ?? 'customer';
   /* بطاقات الإحصائيات العلوية */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 6px;
   }
 
   .stat-card {
     background: var(--white);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
     padding: 18px 20px;
     box-shadow: var(--shadow-sm);
@@ -374,17 +402,29 @@ $role = $user['role'] ?? 'customer';
     align-items: center;
     justify-content: space-between;
     transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
   }
 
   .stat-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
   }
 
   .stat-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
   }
 
   .stat-label {
@@ -394,24 +434,26 @@ $role = $user['role'] ?? 'customer';
   }
 
   .stat-value {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 900;
     color: var(--navy);
+    line-height: 1;
   }
 
   .stat-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 24px;
   }
-  .icon-blue   { background: #EFF6FF; color: #1D4ED8; }
-  .icon-green  { background: #ECFDF5; color: #10B981; }
-  .icon-gold   { background: #FEF3C7; color: #F59E0B; }
-  .icon-red    { background: #FEE2E2; color: #EF4444; }
+  .icon-blue   { background: linear-gradient(135deg, #DBEAFE, #EFF6FF); color: #1D4ED8; }
+  .icon-green  { background: linear-gradient(135deg, #A7F3D0, #D1FAE5); color: #047857; }
+  .icon-gold   { background: linear-gradient(135deg, #FDE68A, #FEF3C7); color: #B45309; }
+  .icon-red    { background: linear-gradient(135deg, #FECACA, #FEE2E2); color: #B91C1C; }
+  .icon-purple { background: linear-gradient(135deg, #DDD6FE, #EDE9FE); color: #6D28D9; }
 
   /* صندوق رخصة العميل البارز */
   .license-banner {
@@ -535,11 +577,11 @@ $role = $user['role'] ?? 'customer';
   /* البطاقات والجداول */
   .section-card {
     background: var(--white);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-xl);
-    padding: 24px;
+    padding: 22px;
     box-shadow: var(--shadow-sm);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   .section-header {
@@ -549,10 +591,12 @@ $role = $user['role'] ?? 'customer';
     margin-bottom: 18px;
     flex-wrap: wrap;
     gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-light);
   }
 
   .section-title {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 900;
     color: var(--navy);
     display: flex;
@@ -563,6 +607,8 @@ $role = $user['role'] ?? 'customer';
   .table-responsive {
     overflow-x: auto;
     width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
   }
 
   table {
@@ -573,24 +619,35 @@ $role = $user['role'] ?? 'customer';
   }
 
   th {
-    padding: 12px 14px;
-    background: #F8FAFC;
+    padding: 11px 14px;
+    background: #F5F0ED;
     color: var(--slate);
+    font-size: 11.5px;
     font-weight: 800;
-    border-bottom: 1.5px solid var(--border);
+    border-bottom: 1px solid var(--border);
     white-space: nowrap;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
   }
 
   td {
-    padding: 13px 14px;
-    border-bottom: 1px solid var(--border);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-light);
     color: var(--navy);
     font-weight: 600;
     vertical-align: middle;
   }
 
-  tr:hover td {
-    background: #F8FAFC;
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:nth-child(even) td {
+    background: #FDFAF8;
+  }
+
+  tbody tr:hover td {
+    background: var(--primary-light) !important;
   }
 
   .badge-pill {
