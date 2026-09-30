@@ -1,9 +1,75 @@
 <?php
 session_start();
+$config = require __DIR__ . '/firebase.php';
+
 // إذا كان المستخدم مسجل دخوله مسبقاً، تحويله مباشرة للوحة التحكم
 if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     header("Location: dashboard.php");
     exit;
+}
+
+$loginError = '';
+$infoMessage = '';
+if (isset($_GET['error'])) {
+    if ($_GET['error'] === 'unauthorized') {
+        $infoMessage = 'يرجى تسجيل الدخول أولاً للوصول إلى نظام الكاشير.';
+    } elseif ($_GET['error'] === 'login_required') {
+        $infoMessage = 'يرجى تسجيل الدخول أولاً لتنزيل برامج وتطبيقات الكاشير.';
+    }
+}
+
+// معالجة تسجيل الدخول المباشر (Standard Form POST) لضمان العمل 100% على كافة الاستضافات
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $loginType = $_POST['login_type'] ?? 'credentials';
+    if ($loginType === 'credentials') {
+        $email = strtolower(trim($_POST['email'] ?? ''));
+        $password = $_POST['password'] ?? '';
+        
+        // 1. حساب الأدمن الافتراضي
+        if ($email === 'admin@cafepos.com' && $password === 'admin123') {
+            $_SESSION['portal_user'] = [
+                'email' => $email,
+                'name' => 'مدير النظام',
+                'role' => 'admin',
+                'branchId' => 'main'
+            ];
+            header("Location: dashboard.php");
+            exit;
+        }
+        
+        // 2. فحص الحسابات المسجلة في السيرفر
+        $profile = getUserProfile($config, $email);
+        if ($profile && ($profile['password'] ?? '') === $password && !empty($profile['active'])) {
+            $_SESSION['portal_user'] = [
+                'email' => $email,
+                'name' => $profile['name'] ?? $email,
+                'role' => $profile['role'] ?? 'customer',
+                'licenseKey' => $profile['licenseKey'] ?? null,
+                'branchId' => $profile['branchId'] ?? 'main'
+            ];
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            $loginError = 'بيانات الدخول غير صحيحة أو الحساب معطل.';
+        }
+    } elseif ($loginType === 'license') {
+        $licenseKey = strtoupper(trim($_POST['license_key'] ?? ''));
+        $lic = getLicenseByKey($config, $licenseKey);
+        if ($lic && !empty($lic['active'])) {
+            $_SESSION['portal_user'] = [
+                'email' => $lic['customerEmail'] ?? ($licenseKey . '@cafe.license'),
+                'name' => $lic['customerName'] ?? $lic['cafeName'] ?? 'صاحب المقهى',
+                'role' => 'customer',
+                'licenseKey' => $licenseKey,
+                'cafeName' => $lic['cafeName'] ?? 'كافيه',
+                'branchId' => $licenseKey
+            ];
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            $loginError = 'مفتاح الترخيص غير صالح أو تم إيقافه من قبل الإدارة.';
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -58,8 +124,8 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     border: 1.5px solid var(--border);
     box-shadow: var(--shadow-card);
     width: 100%;
-    max-width: 460px;
-    padding: 38px 32px;
+    max-width: 440px;
+    padding: 36px 30px;
     position: relative;
     overflow: hidden;
   }
@@ -76,7 +142,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
 
   .brand-header {
     text-align: center;
-    margin-bottom: 26px;
+    margin-bottom: 24px;
   }
 
   .brand-icon {
@@ -95,7 +161,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
 
   .brand-title {
     font-family: 'Pacifico', cursive;
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
     color: var(--primary);
     line-height: 1.2;
@@ -114,7 +180,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     background: #F1F5F9;
     padding: 4px;
     border-radius: 14px;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
     gap: 4px;
   }
 
@@ -124,7 +190,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     border-radius: 10px;
     border: none;
     background: transparent;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--slate);
     cursor: pointer;
@@ -139,7 +205,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
   }
 
   .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     text-align: right;
   }
 
@@ -171,7 +237,7 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
   .input-control:focus {
     background: #FFFFFF;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3.5px rgba(29, 78, 216, 0.12);
+    box-shadow: 0 0 0 3px rgba(99, 38, 46, 0.12);
   }
 
   .btn-submit {
@@ -185,173 +251,131 @@ if (isset($_SESSION['portal_user']) && !empty($_SESSION['portal_user'])) {
     font-weight: 800;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 4px 14px rgba(29, 78, 216, 0.35);
+    box-shadow: 0 4px 14px rgba(99, 38, 46, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   .btn-submit:hover {
     background: var(--primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(29, 78, 216, 0.45);
+    box-shadow: 0 6px 20px rgba(99, 38, 46, 0.45);
   }
 
-  .btn-submit:active {
-    transform: scale(0.98);
-  }
-
-  .hint-box {
-    margin-top: 24px;
-    background: var(--primary-light);
-    border: 1px dashed var(--primary-border);
-    border-radius: 14px;
-    padding: 14px;
-    font-size: 12px;
-    color: #1E40AF;
-    line-height: 1.6;
-  }
-
-  .hint-title {
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 6px;
-    color: var(--primary);
-  }
-
-  .quick-roles {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-
-  .role-chip {
-    padding: 4px 10px;
-    background: #FFFFFF;
-    border: 1px solid var(--primary-border);
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--primary);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .role-chip:hover {
-    background: var(--primary);
-    color: #fff;
-  }
-
-  .toast {
-    position: fixed;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-100px);
-    background: var(--navy);
-    color: #fff;
-    padding: 12px 24px;
+  .alert-banner {
+    padding: 12px 14px;
     border-radius: 12px;
-    font-size: 13.5px;
+    font-size: 12.5px;
     font-weight: 700;
-    z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: #DC2626; }
-  .toast.success { background: #059669; }
+  .alert-danger {
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+  }
+  .alert-info {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    border: 1px solid #BFDBFE;
+  }
+
+  .footer-note {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--slate);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
 </style>
 </head>
 <body>
 
-<div id="toast" class="toast"></div>
-
 <div class="login-card">
   <div class="brand-header">
     <div class="brand-icon">☕</div>
-    <h1 class="brand-title">بوابة إدارة المقاهي السحابية</h1>
-    <p class="brand-sub">إدارة التراخيص والمبيعات والمخزون عن بُعد</p>
+    <h1 class="brand-title">كافيه دي بوينت</h1>
+    <p class="brand-sub">بوابة إدارة المقاهي والكاشير السحابي</p>
   </div>
+
+  <?php if ($loginError): ?>
+    <div class="alert-banner alert-danger">
+      <span>⚠️</span>
+      <span><?= htmlspecialchars($loginError) ?></span>
+    </div>
+  <?php elseif ($infoMessage): ?>
+    <div class="alert-banner alert-info">
+      <span>🔒</span>
+      <span><?= htmlspecialchars($infoMessage) ?></span>
+    </div>
+  <?php endif; ?>
 
   <div class="auth-tabs">
     <button type="button" class="auth-tab active" id="tabCreds" onclick="switchTab('creds')">البريد الإلكتروني</button>
-    <button type="button" class="auth-tab" id="tabLicense" onclick="switchTab('license')">مفتاح الترخيص (للكاستمير)</button>
+    <button type="button" class="auth-tab" id="tabLicense" onclick="switchTab('license')">مفتاح الترخيص (اللايسنس)</button>
   </div>
 
-  <!-- نموذج الدخول بالإيميل -->
-  <form id="credsForm" onsubmit="handleCredsLogin(event)">
+  <!-- نموذج الدخول بالبريد الإلكتروني -->
+  <form id="credsForm" method="POST" action="index.php">
+    <input type="hidden" name="login_type" value="credentials" />
     <div class="form-group">
       <label class="form-label">البريد الإلكتروني</label>
       <div class="input-wrap">
-        <input type="email" id="emailInput" class="input-control" placeholder="admin@cafepos.com" required dir="ltr" />
+        <input type="email" name="email" id="emailInput" class="input-control" placeholder="admin@cafepos.com" required dir="ltr" />
       </div>
     </div>
 
     <div class="form-group">
       <label class="form-label">كلمة المرور</label>
       <div class="input-wrap">
-        <input type="password" id="passwordInput" class="input-control" placeholder="••••••••" required dir="ltr" />
+        <input type="password" name="password" id="passwordInput" class="input-control" placeholder="••••••••" required dir="ltr" />
       </div>
     </div>
 
     <button type="submit" class="btn-submit" id="credsBtn">
-      <span>تسجيل الدخول</span>
+      <span>تسجيل الدخول للنظام</span>
       <span>←</span>
     </button>
   </form>
 
   <!-- نموذج الدخول بمفتاح الترخيص مباشرة -->
-  <form id="licenseForm" style="display:none;" onsubmit="handleLicenseLogin(event)">
+  <form id="licenseForm" method="POST" action="index.php" style="display:none;">
+    <input type="hidden" name="login_type" value="license" />
     <div class="form-group">
-      <label class="form-label">مفتاح الترخيص الخاص بك</label>
+      <label class="form-label">مفتاح الترخيص (License Key)</label>
       <div class="input-wrap">
-        <input type="text" id="licenseKeyInput" class="input-control" placeholder="مثلاً: CAFE-XXXX-XXXX" required dir="ltr" style="letter-spacing:1px;font-weight:800;text-transform:uppercase;" />
+        <input type="text" name="license_key" id="licenseKeyInput" class="input-control" placeholder="مثلاً: CAFE-F313-C465" required dir="ltr" style="letter-spacing:1px;font-weight:800;text-transform:uppercase;" />
       </div>
       <div style="font-size:11px;color:var(--slate);margin-top:6px;">
-        💡 للدخول السريع كصاحب مقهى لمتابعة مبيعاتك وتعديل الأصناف دون الحاجة لكلمة مرور.
+        💡 خاص بأصحاب المقاهي المعتمدين للدخول المباشر لإدارة المبيعات والأصناف.
       </div>
     </div>
 
     <button type="submit" class="btn-submit" id="licenseBtn">
-      <span>دخول بالمفتاح</span>
+      <span>دخول بمفتاح الترخيص</span>
       <span>←</span>
     </button>
   </form>
 
-  <div style="margin-top: 22px; padding-top: 16px; border-top: 1.5px dashed var(--border); text-align: center;">
-    <div style="font-size: 12.5px; font-weight: 700; color: var(--slate); margin-bottom: 10px;">
-      📲 تنزيل تطبيقات الكاشير ونقاط البيع:
-    </div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <a href="https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk" class="btn-submit" style="text-decoration: none; background: #63262E; box-shadow: 0 4px 14px rgba(99, 38, 46, 0.35); font-size: 13.5px;">
-        <span>📱</span>
-        <span>تحميل تطبيق الهاتف وسامسونج (Android APK)</span>
-      </a>
-      <a href="download.php" class="btn-submit" style="text-decoration: none; background: #10B981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); font-size: 13.5px;">
-        <span>💻</span>
-        <span>تحميل برنامج الكمبيوتر (.exe)</span>
-      </a>
-      <a href="flutter/" target="_blank" class="btn-submit" style="text-decoration: none; background: #0284C7; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); font-size: 13.5px;">
-        <span>🌐</span>
-        <span>تشغيل كاشير فلاتر في المتصفح (Web POS)</span>
-      </a>
-    </div>
+  <div class="footer-note">
+    <span>🔒</span>
+    <span>نظام محمي ومشفر • يمنع الدخول إلا بحساب أو ترخيص مصرح به.</span>
   </div>
 </div>
 
 <script>
-let currentTab = 'creds';
-
 function switchTab(tab) {
-  currentTab = tab;
   const tabCreds = document.getElementById('tabCreds');
   const tabLicense = document.getElementById('tabLicense');
   const credsForm = document.getElementById('credsForm');
@@ -367,86 +391,6 @@ function switchTab(tab) {
     tabLicense.classList.add('active');
     credsForm.style.display = 'none';
     licenseForm.style.display = 'block';
-  }
-}
-
-function showToast(msg, type = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  setTimeout(() => t.className = 'toast', 3500);
-}
-
-async function handleCredsLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value;
-  const btn = document.getElementById('credsBtn');
-  
-  btn.disabled = true;
-  btn.textContent = 'جارٍ الدخول...';
-
-  try {
-    const res = await fetch('api.php?action=login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'credentials', email, password })
-    });
-    const text = await res.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch(e) {
-      throw new Error(text.trim() || ('خطأ خادم ' + res.status));
-    }
-    if (data.ok) {
-      showToast('✅ تم تسجيل الدخول بنجاح', 'success');
-      setTimeout(() => window.location.href = 'dashboard.php', 600);
-    } else {
-      showToast(data.error || 'بيانات الدخول غير صحيحة', 'error');
-      btn.disabled = false;
-      btn.innerHTML = '<span>تسجيل الدخول</span><span>←</span>';
-    }
-  } catch (err) {
-    showToast('تعذر الاتصال بالخادم: ' + (err.message || ''), 'error');
-    btn.disabled = false;
-    btn.innerHTML = '<span>تسجيل الدخول</span><span>←</span>';
-  }
-}
-
-async function handleLicenseLogin(e) {
-  e.preventDefault();
-  const licenseKey = document.getElementById('licenseKeyInput').value.trim();
-  const btn = document.getElementById('licenseBtn');
-
-  btn.disabled = true;
-  btn.textContent = 'جارٍ التحقق...';
-
-  try {
-    const res = await fetch('api.php?action=login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'license', licenseKey })
-    });
-    const text = await res.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch(e) {
-      throw new Error(text.trim() || ('خطأ خادم ' + res.status));
-    }
-    if (data.ok) {
-      showToast('✅ تم التحقق من الترخيص، مرحباً بك!', 'success');
-      setTimeout(() => window.location.href = 'dashboard.php', 600);
-    } else {
-      showToast(data.error || 'الترخيص غير صالح أو غير مسجل', 'error');
-      btn.disabled = false;
-      btn.innerHTML = '<span>دخول بالمفتاح</span><span>←</span>';
-    }
-  } catch (err) {
-    showToast('تعذر الاتصال بالخادم: ' + (err.message || ''), 'error');
-    btn.disabled = false;
-    btn.innerHTML = '<span>دخول بالمفتاح</span><span>←</span>';
   }
 }
 </script>

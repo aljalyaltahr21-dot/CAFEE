@@ -1,11 +1,17 @@
 <?php
 // =======================================================
-// صفحة تنزيل برنامج الكاشير المكتبي (Desktop POS)
-// تدعم التنزيل المباشر لمعالج التثبيت (.exe) أو الملف المضغوط (.zip)
-// مع تقنية الـ Chunked Streaming لتفادي استهلاك ذاكرة السيرفر
+// صفحة تنزيل برنامج الكاشير المكتبي وتطبيق الهاتف
+// مشفرة ومحمية: تتطلب تسجيل الدخول أولاً للوصول للتحميل
 // =======================================================
 
+session_start();
+if (!isset($_SESSION['portal_user']) || empty($_SESSION['portal_user'])) {
+    header("Location: index.php?error=login_required");
+    exit;
+}
+
 $format = strtolower($_GET['format'] ?? 'exe'); // 'exe' أو 'zip'
+
 
 $downloadsDir = __DIR__ . '/downloads';
 $exeFile = $downloadsDir . '/CafePOS-Setup.exe';
