@@ -760,6 +760,49 @@ if ($action === 'check_mobile_update') {
     ]);
 }
 
+// التحقق من مفتاح الترخيص وتنشيط تطبيق الكاشير (Verify License API)
+if ($action === 'verify_license') {
+    $key = trim($_GET['key'] ?? $input['key'] ?? '');
+    if (!$key) {
+        jsonResponse(false, [], 'يرجى إدخال مفتاح الترخيص (License Key)', 400);
+    }
+    $lic = getLicenseByKey($config, $key);
+    if (!$lic) {
+        jsonResponse(false, [], 'مفتاح الترخيص غير موجود في النظام. يرجى مراجعة إدارة النظام.', 404);
+    }
+    if (empty($lic['active'])) {
+        jsonResponse(false, [], 'تم إيقاف هذا الترخيص من قبل إدارة النظام.', 403);
+    }
+    if (!empty($lic['expiresAt'])) {
+        $exp = is_numeric($lic['expiresAt']) ? (int)$lic['expiresAt'] : strtotime($lic['expiresAt']) * 1000;
+        if ($exp && (time() * 1000) > $exp) {
+            jsonResponse(false, [], 'انتهت صلاحية هذا الترخيص. يرجى التجديد مع إدارة النظام.', 403);
+        }
+    }
+
+    // تحديث حالة النشاط
+    saveLicenseData($config, $key, [
+        'lastValidatedAt' => date('c'),
+        'lastActiveAt' => date('c'),
+        'online' => true,
+    ]);
+
+    // جلب أصناف المقهى الخاصة بهذا الترخيص
+    $bData = getBranchData($config, $key) ?: [];
+    $products = !empty($bData['products']) ? $bData['products'] : getDefaultProducts();
+
+    jsonResponse(true, [
+        'valid' => true,
+        'key' => $key,
+        'cafeName' => $lic['cafeName'] ?? 'كافيه دي بوينت',
+        'customerName' => $lic['customerName'] ?? 'عميل معتمد',
+        'expiresAt' => $lic['expiresAt'] ?? null,
+        'branchId' => $key,
+        'products' => $products,
+        'message' => 'تم التحقق من الترخيص وتنشيط النظام بنجاح ✓'
+    ]);
+}
+
 function requireRoleCustomerOrAny() {
     return requireAuth();
 }
