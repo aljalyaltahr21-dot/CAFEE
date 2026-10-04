@@ -643,7 +643,14 @@ ipcMain.handle("send-day-report", async (event, report) => {
 
 ipcMain.on("restart-app", () => {
   if (app.isPackaged) {
-    autoUpdater.quitAndInstall();
+    app.removeAllListeners("window-all-closed");
+    BrowserWindow.getAllWindows().forEach(w => {
+      try { w.destroy(); } catch (_) {}
+    });
+    autoUpdater.quitAndInstall(false, true);
+    setTimeout(() => {
+      app.exit(0);
+    }, 400);
   } else {
     app.relaunch();
     app.exit(0);
