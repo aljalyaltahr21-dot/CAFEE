@@ -707,7 +707,7 @@ function renderCartPanelInner() {
       </div>
     </div>
 
-    <!-- حاوية أصناف السلة: تعرض 4 أصناف بارتفاع ثابت ولا تزيد لأسفل أبداً -->
+    <!-- حاوية أصناف السلة: مرنة تملأ كامل المساحة المتاحة بشكل متناسق مع لوحة الأرقام -->
     <div class="cart-lines-wrap">
       ${lines.length === 0
         ? `<div class="cart-empty-placeholder">

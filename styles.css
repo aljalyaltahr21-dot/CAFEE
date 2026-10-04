@@ -1110,19 +1110,18 @@ a { text-decoration: none; }
   border-color: #1D4ED8;
 }
 
-/* لوحة السلة — تخطيط ثابت ومحكم يضمن ظهور زر البيع دائماً بدون اختفاء */
+/* لوحة السلة — تخطيط متناسق يملأ كامل الارتفاع بدون أي فراغ مفقود */
 .cart-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
   max-height: 100%;
-  padding: 8px 10px;
+  padding: 10px 12px;
   background: #FFFFFF;
   border-radius: var(--radius-xl);
   border: 1.5px solid #E2E8F0;
   box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   box-sizing: border-box;
   position: relative;
 }
@@ -1131,10 +1130,10 @@ a { text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 5px;
+  padding-bottom: 8px;
   border-bottom: 1.5px solid #F1F5F9;
   flex-shrink: 0;
-  margin-bottom: 2px;
+  margin-bottom: 6px;
 }
 
 .cart-panel h3 {
@@ -1144,19 +1143,19 @@ a { text-decoration: none; }
   display: flex; align-items: center; gap: 6px;
 }
 
-/* حاوية الأصناف: مرنة تنكمش وتتمدد بذكاء مع شريط تمرير داخلي */
+/* حاوية الأصناف: تتمدد بالكامل وتملأ المساحة الرأسية المتاحة بمرونة مع شريط تمرير داخلي */
 .cart-lines-wrap {
-  flex: 1 1 auto;
-  min-height: 55px;
-  max-height: 160px;
+  flex: 1 1 0;
+  min-height: 110px;
+  max-height: none;
   display: flex;
   flex-direction: column;
-  margin: 2px 0;
+  margin: 0 0 6px 0;
   overflow: hidden;
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
   border-radius: var(--radius-md);
-  padding: 3px;
+  padding: 4px;
   box-sizing: border-box;
 }
 
@@ -1178,15 +1177,16 @@ a { text-decoration: none; }
   align-items: center;
   justify-content: center;
   height: 100%;
-  min-height: 48px;
+  flex: 1;
+  min-height: 90px;
   color: #94A3B8;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
-  gap: 3px;
+  gap: 6px;
 }
 .cart-empty-placeholder .cart-empty-icon {
-  font-size: 20px;
-  opacity: .35;
+  font-size: 24px;
+  opacity: .4;
   color: #1D4ED8;
 }
 
@@ -1271,17 +1271,16 @@ a { text-decoration: none; }
   color: #0F172A;
 }
 
-/* قسم الإجماليات والدفع — مثبت بالأسفل لا يختفي أبداً */
+/* قسم الإجماليات والدفع — متصل مباشرة أسفل لوحة الأرقام بدون أي فراغ ضائع */
 .cart-bottom-section {
   flex-shrink: 0;
   border-top: 1.5px solid #E2E8F0;
-  padding-top: 5px;
-  margin-top: auto;
+  padding-top: 6px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  position: sticky;
-  bottom: 0;
+  position: static;
   background: #FFFFFF;
   z-index: 10;
 }
@@ -1462,13 +1461,6 @@ tbody tr:hover { background: var(--cream); }
 .icon-btn:active { transform: scale(.9); }
 
 /* رأس لوحة السلة مع أزرار الإجراءات */
-.cart-panel-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-bottom: 14px;
-  margin-bottom: 14px;
-  border-bottom: 1.5px solid var(--border-light);
-}
-.cart-panel-head h3 { margin: 0; font-size: 15px; }
 .cart-actions { display: flex; gap: 6px; }
 .icon-btn-sm {
   width: 28px; height: 28px;
