@@ -85,7 +85,12 @@ class _PosScreenState extends State<PosScreen> {
         appBar: AppBar(
           backgroundColor: AppTheme.cardBg,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          shadowColor: AppTheme.primary.withValues(alpha: 0.15),
           surfaceTintColor: Colors.transparent,
+          shape: const Border(
+            bottom: BorderSide(color: AppTheme.borderLight, width: 1.5),
+          ),
           centerTitle: false,
           leading: Builder(
             builder: (ctx) => IconButton(
@@ -150,8 +155,18 @@ class _PosScreenState extends State<PosScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Full Width Search Box
-                SizedBox(
-                  height: 44,
+                Container(
+                  height: 46,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primary.withValues(alpha: 0.07),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: TextField(
                     controller: _searchController,
                     onChanged: (val) => _controller.setSearchQuery(val),

@@ -29,18 +29,22 @@ class ProductCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.cardBg,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.borderLight, width: 1.5),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFFFFFFF), Color(0xFFFFFBF9)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.borderLight, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: AppTheme.primary.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -49,17 +53,29 @@ class ProductCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  width: 72,
-                  height: 72,
-                  color: AppTheme.borderLight,
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Center(
-                      child: Text('☕', style: TextStyle(fontSize: 30)),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: AppTheme.borderLight,
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Center(
+                        child: Text('☕', style: TextStyle(fontSize: 32)),
+                      ),
                     ),
                   ),
                 ),
@@ -191,8 +207,23 @@ class ProductCard extends StatelessWidget {
           const SizedBox(height: 10),
 
           // Add to Bill Button
-          SizedBox(
-            height: 42,
+          Container(
+            height: 46,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [AppTheme.primary, Color(0xFF8A3A44)],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.35),
+                  blurRadius: 12,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
             child: ElevatedButton(
               onPressed: () {
                 controller.addToCart(product);
@@ -208,11 +239,12 @@ class ProductCard extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primary,
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
@@ -269,15 +301,24 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    height: 28,
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
                     decoration: BoxDecoration(
                       color: isSelected ? AppTheme.primary : AppTheme.cardBg,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected ? AppTheme.primary : AppTheme.border,
                         width: 1.0,
                       ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: AppTheme.primary.withValues(alpha: 0.30),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     alignment: Alignment.center,
                     child: FittedBox(
@@ -285,7 +326,7 @@ class ProductCard extends StatelessWidget {
                       child: Text(
                         opt,
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                           color: isSelected ? Colors.white : AppTheme.slate,
                         ),
