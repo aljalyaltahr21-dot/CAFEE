@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 
 class UpdateService {
-  static const String currentVersion = '1.0.0';
+  static const String currentVersion = '1.0.2';
 
   // Server endpoints to check
   static const List<String> serverUrls = [
@@ -40,7 +40,7 @@ class UpdateService {
     if (updateData != null && updateData['hasUpdate'] == true && context.mounted) {
       showUpdateDialog(
         context: context,
-        latestVersion: updateData['latestVersion'] ?? '1.0.1',
+        latestVersion: updateData['latestVersion'] ?? '1.0.2',
         releaseNotes: updateData['releaseNotes'] ?? 'تحسينات جديدة في الأداء والواجهات.',
         downloadUrl: updateData['downloadUrl'] ??
             'https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk',
@@ -79,7 +79,7 @@ class UpdateService {
     if (updateData != null && updateData['hasUpdate'] == true) {
       showUpdateDialog(
         context: context,
-        latestVersion: updateData['latestVersion'] ?? '1.0.1',
+        latestVersion: updateData['latestVersion'] ?? '1.0.2',
         releaseNotes: updateData['releaseNotes'] ?? 'تحسينات جديدة في الأداء والواجهات.',
         downloadUrl: updateData['downloadUrl'] ??
             'https://github.com/aljalyaltahr21-dot/CAFEE/releases/download/flutter-apk-latest/app-release.apk',

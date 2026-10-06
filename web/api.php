@@ -746,7 +746,7 @@ if ($action === 'list_all_branches') {
 // التحقق من تحديثات تطبيق سامسونج وأندرويد (Mobile / Samsung Update API)
 if ($action === 'check_mobile_update') {
     $clientVersion = $_GET['version'] ?? '1.0.0';
-    $latestVersion = '1.0.1';
+    $latestVersion = '1.0.2';
     $hasUpdate = version_compare($latestVersion, $clientVersion, '>');
 
     jsonResponse(true, [
